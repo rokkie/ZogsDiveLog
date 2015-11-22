@@ -31,5 +31,35 @@
   "Role": {
     "dataSource": "db",
     "public": false
+  },
+  "Country": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "Dive": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "DiveSite": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "Diver": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "WaterExposure": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "WaterCondition": {
+    "dataSource": "PrimaryStorage",
+    "public": true
+  },
+  "Cylinder": {
+    "dataSource": null,
+    "public": true,
+    "$promise": {},
+    "$resolved": true
   }
 }

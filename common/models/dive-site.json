@@ -1,0 +1,99 @@
+{
+  "name": "DiveSite",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "postgresql": {
+    "schema": "public",
+    "table": "dive_site"
+  },
+  "properties": {
+    "countryId": {
+      "type": "number",
+      "required": true,
+      "length": null,
+      "precision": 32,
+      "scale": 0,
+      "postgresql": {
+        "columnName": "country_id",
+        "dataType": "integer",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "NO"
+      },
+      "_selectable": false
+    },
+    "id": {
+      "type": "number",
+      "id": true,
+      "required": true,
+      "length": null,
+      "precision": 32,
+      "scale": 0,
+      "postgresql": {
+        "columnName": "id",
+        "dataType": "integer",
+        "dataLength": null,
+        "dataPrecision": 32,
+        "dataScale": 0,
+        "nullable": "NO"
+      },
+      "_selectable": false
+    },
+    "latitude": {
+      "type": "number",
+      "required": true,
+      "length": null,
+      "precision": 8,
+      "scale": 6,
+      "postgresql": {
+        "columnName": "latitude",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 8,
+        "dataScale": 6,
+        "nullable": "NO"
+      },
+      "_selectable": false
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "length": null,
+      "precision": null,
+      "scale": null,
+      "postgresql": {
+        "columnName": "location",
+        "dataType": "text",
+        "dataLength": null,
+        "dataPrecision": null,
+        "dataScale": null,
+        "nullable": "NO"
+      },
+      "_selectable": false
+    },
+    "longitude": {
+      "type": "number",
+      "required": true,
+      "length": null,
+      "precision": 9,
+      "scale": 6,
+      "postgresql": {
+        "columnName": "longitude",
+        "dataType": "numeric",
+        "dataLength": null,
+        "dataPrecision": 9,
+        "dataScale": 6,
+        "nullable": "NO"
+      },
+      "_selectable": false
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": []
+}
