@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<role name="divelog_admin"
+      superuser="true"
+      login="true"
+      encrypted="true"
+      password="PG31gJ9JBf7GdYG3HUWS">
+</role>
+
+<role name="divelog_webuser"
+      login="true"
+      encrypted="true"
+      password="tnytygHNppordb9VEFiM">
+</role>
+
+<database name="divelog" encoding="UTF8">
+	<role name="divelog_admin"/>
+</database>
+
+<schema name="public" protected="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="country">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="1140" y="440"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text"/>
+	</column>
+	<constraint name="pk_country" type="pk-constr" table="public.country">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•name•code⸣
+•Netherlands•nl]]>
+	</initial-data>
+</table>
+
+<table name="dive_site">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="1140" y="240"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="location" not-null="true">
+		<type name="text"/>
+		<comment><![CDATA[Arbitrary name for the site]]></comment>
+	</column>
+	<column name="latitude" not-null="true">
+		<type name="decimal" length="8" precision="6"/>
+	</column>
+	<column name="longitude" not-null="true">
+		<type name="decimal" length="9" precision="6"/>
+	</column>
+	<constraint name="pk_dive_site" type="pk-constr" table="public.dive_site">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="country_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fk_country" index="1"/>
+	</customidxs>
+</table>
+
+<table name="diver">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="140" y="220"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="date_of_birth" not-null="true">
+		<type name="date"/>
+	</column>
+	<constraint name="pk_diver" type="pk-constr" table="public.diver">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<usertype name="waterType" configuration="enumeration">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<enumeration values="salt,fresh"/>
+</usertype>
+
+<usertype name="material" configuration="enumeration">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<enumeration values="aluminium,steel"/>
+</usertype>
+
+<relationship name="country_has_many_divesite" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#91d75a"
+	 src-table="public.country"
+	 dst-table="public.dive_site"
+	 src-required="true" dst-required="false"/>
+
+<usertype name="waterExposure" configuration="enumeration">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<enumeration values="swimsuit,shorty,long john,boots,gloves,cap"/>
+</usertype>
+
+<usertype name="waterCondition" configuration="enumeration">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<enumeration values="shore,boat,current,surf,surge"/>
+</usertype>
+
+<usertype name="cylinder" configuration="composite">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<typeattrib name="capacity">
+		<type name="smallint"/>
+	</typeattrib>
+	<typeattrib name="material">
+		<type name="public.material"/>
+	</typeattrib>
+</usertype>
+
+<table name="water_exposure">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<appended-sql><![CDATA[INSERT INTO public.water_exposure (exposure) VALUES ('swimsuit');
+INSERT INTO public.water_exposure (exposure) VALUES ('shorty');
+INSERT INTO public.water_exposure (exposure) VALUES ('long john');
+INSERT INTO public.water_exposure (exposure) VALUES ('boots');
+INSERT INTO public.water_exposure (exposure) VALUES ('gloves');
+INSERT INTO public.water_exposure (exposure) VALUES ('cap');
+]]></appended-sql>
+	<position x="120" y="500"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="exposure" not-null="true">
+		<type name="public.&quot;waterExposure&quot;"/>
+	</column>
+	<constraint name="pk_water_exposure" type="pk-constr" table="public.water_exposure">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•exposure⸣
+•swimsuit⸣
+•shorty⸣
+•long john⸣
+•gloves⸣
+•cap⸣
+•boots]]>
+	</initial-data>
+</table>
+
+<table name="water_condition">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<appended-sql><![CDATA[INSERT INTO public.water_condition (condition) VALUES ('shore');
+INSERT INTO public.water_condition (condition) VALUES ('boat');
+INSERT INTO public.water_condition (condition) VALUES ('current');
+INSERT INTO public.water_condition (condition) VALUES ('surf');
+INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sql>
+	<position x="120" y="360"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="condition" not-null="true">
+		<type name="public.&quot;waterCondition&quot;"/>
+	</column>
+	<constraint name="pk_water_condition" type="pk-constr" table="public.water_condition">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•condition⸣
+•shore⸣
+•boat⸣
+•surf⸣
+•surge⸣
+•current]]>
+	</initial-data>
+</table>
+
+<table name="dive">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="620" y="200"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="dive_nr" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="depth" not-null="true">
+		<type name="smallint"/>
+		<comment><![CDATA[Maximum depth reached]]></comment>
+	</column>
+	<column name="date" not-null="true">
+		<type name="date"/>
+		<comment><![CDATA[Date the dive took place]]></comment>
+	</column>
+	<column name="safety_stop" not-null="true">
+		<type name="boolean"/>
+		<comment><![CDATA[If a safety stop was done]]></comment>
+	</column>
+	<column name="bottom_time" not-null="true">
+		<type name="tinterval"/>
+		<comment><![CDATA[Time spent under water]]></comment>
+	</column>
+	<column name="time_in" not-null="true">
+		<type name="time with time zone" with-timezone="true"/>
+		<comment><![CDATA[Time decend started]]></comment>
+	</column>
+	<column name="time_out" not-null="true">
+		<type name="time with time zone" with-timezone="true"/>
+		<comment><![CDATA[Time ascend started]]></comment>
+	</column>
+	<column name="tank_pressure_start" not-null="true">
+		<type name="smallint"/>
+		<comment><![CDATA[Tank pressure before entering]]></comment>
+	</column>
+	<column name="tank_pressure_end" not-null="true">
+		<type name="smallint"/>
+		<comment><![CDATA[Tank pressure after surfacing]]></comment>
+	</column>
+	<column name="cylinder" not-null="true">
+		<type name="public.cylinder"/>
+	</column>
+	<column name="water_type" not-null="true">
+		<type name="public.&quot;waterType&quot;"/>
+		<comment><![CDATA[Water type]]></comment>
+	</column>
+	<column name="surface_interval">
+		<type name="tinterval"/>
+		<comment><![CDATA[Time between two dives]]></comment>
+	</column>
+	<column name="pressure_group_start">
+		<type name="character"/>
+		<comment><![CDATA[Pressure group before entering]]></comment>
+	</column>
+	<column name="pressure_group_end">
+		<type name="character"/>
+		<comment><![CDATA[Pressure group after surfacing]]></comment>
+	</column>
+	<column name="weight">
+		<type name="smallint"/>
+		<comment><![CDATA[Weight carried]]></comment>
+	</column>
+	<column name="visibility">
+		<type name="smallint"/>
+		<comment><![CDATA[Visibility distance]]></comment>
+	</column>
+	<column name="temperature_air">
+		<type name="smallint"/>
+		<comment><![CDATA[Air temperature]]></comment>
+	</column>
+	<column name="temperature_surface">
+		<type name="smallint"/>
+		<comment><![CDATA[Water temperature at the surface]]></comment>
+	</column>
+	<column name="temperature_bottom">
+		<type name="smallint"/>
+		<comment><![CDATA[Water temperature at the bottom]]></comment>
+	</column>
+	<column name="rating">
+		<type name="smallint"/>
+		<comment><![CDATA[Star rating for this dive]]></comment>
+	</column>
+	<column name="comment">
+		<type name="text"/>
+		<comment><![CDATA[Additional comments]]></comment>
+	</column>
+	<constraint name="pk_dive" type="pk-constr" table="public.dive">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ck_rating" type="ck-constr" table="public.dive">
+			<expression><![CDATA[dive.rating > 0 and dive.rating <= 5]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="dive_site_id" index="3"/>
+		<object name="diver_id" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fk_dive_site" index="2"/>
+		<object name="fk_diver" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="divesite_has_many_dive" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#e6b995"
+	 src-table="public.dive_site"
+	 dst-table="public.dive"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="diver_has_many_dive" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#f91d3a"
+	 src-table="public.diver"
+	 dst-table="public.dive"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="many_dive_has_many_water_exposure" type="relnn"
+	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
+	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
+	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
+	 pk-col-pattern="id"
+	 custom-color="#c42b74"
+	 src-table="public.dive"
+	 dst-table="public.water_exposure"
+	 src-required="false" dst-required="false"
+	 table-name="many_dive_has_many_water_exposure"/>
+
+<relationship name="many_dive_has_many_water_condition" type="relnn"
+	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
+	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
+	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
+	 pk-col-pattern="id"
+	 custom-color="#c4321a"
+	 src-table="public.dive"
+	 dst-table="public.water_condition"
+	 src-required="false" dst-required="false"
+	 table-name="many_dive_has_many_water_condition"/>
+
+<extension name="citext">
+	<schema name="public"/>
+</extension>
+
+<permission>
+	<object name="divelog" type="database"/>
+	<roles names="divelog_webuser"/>
+	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="public.dive" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="public.dive_site" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="public.country" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="public.diver" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="public.water_condition" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="public.water_exposure" type="table"/>
+	<roles names="divelog_webuser"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+</dbmodel>
