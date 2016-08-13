@@ -396,11 +396,20 @@ return array(
         'Divelog\\V1\\Rest\\Dive\\Controller' => array(
             'input_filter' => 'Divelog\\V1\\Rest\\Dive\\Validator',
         ),
+        'Divelog\\V1\\Rest\\WaterCondition\\Controller' => array(
+            'input_filter' => 'Divelog\\V1\\Rest\\WaterCondition\\Validator',
+        ),
         'Divelog\\V1\\Rest\\Country\\Controller' => array(
             'input_filter' => 'Divelog\\V1\\Rest\\Country\\Validator',
         ),
+        'Divelog\\V1\\Rest\\DiveSite\\Controller' => array(
+            'input_filter' => 'Divelog\\V1\\Rest\\DiveSite\\Validator',
+        ),
         'Divelog\\V1\\Rest\\Diver\\Controller' => array(
             'input_filter' => 'Divelog\\V1\\Rest\\Diver\\Validator',
+        ),
+        'Divelog\\V1\\Rest\\WaterExposure\\Controller' => array(
+            'input_filter' => 'Divelog\\V1\\Rest\\WaterExposure\\Validator',
         ),
     ),
     'input_filter_specs' => array(
@@ -646,6 +655,20 @@ return array(
                 ),
             ),
         ),
+        'Divelog\\V1\\Rest\\WaterCondition\\Validator' => array(
+            0 => array(
+                'name' => 'id',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+            1 => array(
+                'name' => 'condition',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+        ),
         'Divelog\\V1\\Rest\\Country\\Validator' => array(
             0 => array(
                 'name' => 'id',
@@ -677,6 +700,68 @@ return array(
             2 => array(
                 'name' => 'code',
                 'required' => true,
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\StringTrim',
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\StripTags',
+                    ),
+                ),
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'min' => 1,
+                            'max' => null,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'Divelog\\V1\\Rest\\DiveSite\\Validator' => array(
+            0 => array(
+                'name' => 'id',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+            1 => array(
+                'name' => 'location',
+                'required' => true,
+                'filters' => array(
+                    0 => array(
+                        'name' => 'Zend\\Filter\\StringTrim',
+                    ),
+                    1 => array(
+                        'name' => 'Zend\\Filter\\StripTags',
+                    ),
+                ),
+                'validators' => array(
+                    0 => array(
+                        'name' => 'Zend\\Validator\\StringLength',
+                        'options' => array(
+                            'min' => 1,
+                            'max' => null,
+                        ),
+                    ),
+                ),
+            ),
+            2 => array(
+                'name' => 'latitude',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+            3 => array(
+                'name' => 'longitude',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+            4 => array(
+                'name' => 'description',
+                'required' => false,
                 'filters' => array(
                     0 => array(
                         'name' => 'Zend\\Filter\\StringTrim',
@@ -747,6 +832,20 @@ return array(
             ),
             3 => array(
                 'name' => 'date_of_birth',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+        ),
+        'Divelog\\V1\\Rest\\WaterExposure\\Validator' => array(
+            0 => array(
+                'name' => 'id',
+                'required' => true,
+                'filters' => array(),
+                'validators' => array(),
+            ),
+            1 => array(
+                'name' => 'exposure',
                 'required' => true,
                 'filters' => array(),
                 'validators' => array(),
