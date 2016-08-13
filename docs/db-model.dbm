@@ -316,6 +316,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="longitude" not-null="true">
 		<type name="decimal" length="9" precision="6"/>
 	</column>
+	<column name="description">
+		<type name="text"/>
+	</column>
 	<constraint name="pk_dive_site" type="pk-constr" table="public.dive_site">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -327,6 +330,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<customidxs object-type="constraint">
 		<object name="fk_country" index="1"/>
 	</customidxs>
+	<initial-data>
+<![CDATA[id•country_id•location•latitude•longitude⸣
+•134•Um El Faroud•35.8190594•14.447566⸣
+•134•Rozi•35.989101•14.326601]]>
+	</initial-data>
 </table>
 
 <table name="diver">
