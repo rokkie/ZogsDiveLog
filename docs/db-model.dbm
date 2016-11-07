@@ -39,7 +39,7 @@ ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 <table name="country">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1060" y="620"/>
+	<position x="1160" y="600"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -313,7 +313,7 @@ ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 <table name="dive_site">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1140" y="240"/>
+	<position x="1160" y="300"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -347,7 +347,6 @@ ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 •134•Rozi•35.989101•14.326601]]>
 	</initial-data>
 </table>
-
 
 <usertype name="waterType" configuration="enumeration">
 	<schema name="public"/>
@@ -403,7 +402,7 @@ INSERT INTO public.water_exposure (exposure) VALUES ('boots');
 INSERT INTO public.water_exposure (exposure) VALUES ('gloves');
 INSERT INTO public.water_exposure (exposure) VALUES ('cap');
 ]]></appended-sql>
-	<position x="120" y="500"/>
+	<position x="80" y="580"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -432,7 +431,7 @@ INSERT INTO public.water_condition (condition) VALUES ('boat');
 INSERT INTO public.water_condition (condition) VALUES ('current');
 INSERT INTO public.water_condition (condition) VALUES ('surf');
 INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sql>
-	<position x="120" y="360"/>
+	<position x="60" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -455,7 +454,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="dive">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="620" y="200"/>
+	<position x="640" y="260"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -601,7 +600,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="user">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
-	<position x="60" y="260"/>
+	<position x="60" y="40"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 		<comment><![CDATA[User ID]]></comment>
@@ -636,7 +635,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="diver">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="60" y="303"/>
+	<position x="60" y="280"/>
 	<column name="first_name" not-null="true">
 		<type name="text"/>
 	</column>
@@ -923,7 +922,7 @@ begin
 <table name="token">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
-	<position x="580" y="103"/>
+	<position x="560" y="40"/>
 	<column name="token" not-null="true">
 		<type name="uuid"/>
 	</column>
