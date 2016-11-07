@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
-	 default-schema="public" default-owner="postgres">
+	 default-schema="public" default-owner="divelog_admin">
 <role name="divelog_admin"
       superuser="true"
       login="true"
@@ -12,23 +12,34 @@ CAUTION: Do not modify this file unless you know what you are doing.
       password="PG31gJ9JBf7GdYG3HUWS">
 </role>
 
-<role name="divelog_webuser"
-      login="true"
-      encrypted="true"
-      password="tnytygHNppordb9VEFiM">
+<role name="divelog_member"
+      login="true">
 </role>
 
-<database name="divelog" encoding="UTF8">
+<role name="divelog_rest"
+      login="true">
+	<comment><![CDATA[Login user for the REST server]]></comment>
+</role>
+
+<role name="divelog_guest">
+	<comment><![CDATA[Anonymous user]]></comment>
+</role>
+
+<database name="divelog" encoding="UTF8" append-at-eod="true">
 	<role name="divelog_admin"/>
+	<tablespace name="pg_default"/>
+	<appended-sql><![CDATA[GRANT divelog_guest, divelog_member TO divelog_rest;
+
+ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 </database>
 
-<schema name="public" protected="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
 <table name="country">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1140" y="440"/>
+	<position x="1060" y="620"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -337,26 +348,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</initial-data>
 </table>
 
-<table name="diver">
-	<schema name="public"/>
-	<role name="divelog_admin"/>
-	<position x="140" y="220"/>
-	<column name="id" not-null="true">
-		<type name="serial"/>
-	</column>
-	<column name="first_name" not-null="true">
-		<type name="text"/>
-	</column>
-	<column name="last_name" not-null="true">
-		<type name="text"/>
-	</column>
-	<column name="date_of_birth" not-null="true">
-		<type name="date"/>
-	</column>
-	<constraint name="pk_diver" type="pk-constr" table="public.diver">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-</table>
 
 <usertype name="waterType" configuration="enumeration">
 	<schema name="public"/>
@@ -558,13 +549,13 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="dive_site_id" index="3"/>
-		<object name="diver_id" index="2"/>
+		<object name="dive_site_id" index="2"/>
+		<object name="diver_id" index="1"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
 		<object name="fk_dive_site" index="2"/>
-		<object name="fk_diver" index="1"/>
+		<object name="fk_diver" index="3"/>
 	</customidxs>
 </table>
 
@@ -577,14 +568,9 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	 dst-table="public.dive"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="diver_has_many_dive" type="rel1n"
-	 src-col-pattern="{st}_{sc}"
-	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
-	 src-fk-pattern="fk_{st}"
-	 custom-color="#f91d3a"
-	 src-table="public.diver"
-	 dst-table="public.dive"
-	 src-required="true" dst-required="false"/>
+<schema name="auth" rect-visible="true" fill-color="#e1e1e1">
+	<role name="divelog_admin"/>
+</schema>
 
 <relationship name="many_dive_has_many_water_exposure" type="relnn"
 	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
@@ -612,39 +598,398 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	<schema name="public"/>
 </extension>
 
-<permission>
-	<object name="divelog" type="database"/>
-	<roles names="divelog_webuser"/>
-	<privileges connect="true"/>
-</permission>
+<table name="user">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<position x="60" y="260"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+		<comment><![CDATA[User ID]]></comment>
+	</column>
+	<column name="email_address" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="role" not-null="true" default-value="'divelog_member'">
+		<type name="name"/>
+		<comment><![CDATA[Database role of the user]]></comment>
+	</column>
+	<column name="enabled" not-null="true" default-value="false">
+		<type name="bool"/>
+	</column>
+	<constraint name="pk_user" type="pk-constr" table="auth.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_email_address" type="uq-constr" table="auth.&quot;user&quot;">
+		<columns names="email_address" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ck_password_len" type="ck-constr" table="auth.&quot;user&quot;">
+			<expression><![CDATA[(length("password") < 512)]]></expression>
+	</constraint>
+	<constraint name="ck_role_len" type="ck-constr" table="auth.&quot;user&quot;">
+			<expression><![CDATA[(length("role") < 512)]]></expression>
+	</constraint>
+</table>
+
+<table name="diver">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="60" y="303"/>
+	<column name="first_name" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="last_name" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="date_of_birth" not-null="true">
+		<type name="date"/>
+	</column>
+
+	<customidxs object-type="column">
+		<object name="id" index="0"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="diver_pk" index="0"/>
+		<object name="user_fk" index="1"/>
+	</customidxs>
+</table>
+
+<function name="bf_user_upsert"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<comment><![CDATA[Hashes the users password and converts e-mail address to lowercase]]></comment>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+  new.email_address = lower(new.email_address);
+  
+  if tg_op = 'INSERT' or new."password" <> old."password" then
+    new."password" = crypt(new."password", gen_salt('bf'));
+  end if;
+
+  return new;
+end;]]></definition>
+</function>
+
+<trigger name="bf_user_upsert" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="auth.&quot;user&quot;">
+		<comment><![CDATA[Hashes password before update and insert]]></comment>
+		<function signature="auth.bf_user_upsert()"/>
+</trigger>
+
+<function name="user_role"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="STABLE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<comment><![CDATA[Gets role for a user]]></comment>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="text"/>
+	</return-type>
+	<parameter name="email_address" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="password" in="true">
+		<type name="text"/>
+	</parameter>
+	<definition><![CDATA[begin
+  return (
+  	select role from auth.user
+   	where auth.user.email_address = user_role.email_address
+    and auth.user."password" = crypt(user_role."password", auth.user."password")
+  );
+end;]]></definition>
+</function>
+
+<relationship name="diver_is_a_user" type="rel11"
+	 src-col-pattern="id"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#f2e5bf"
+	 src-table="auth.&quot;user&quot;"
+	 dst-table="public.diver"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<relationship name="diver_has_many_dive" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#f91d3a"
+	 src-table="public.diver"
+	 dst-table="public.dive"
+	 src-required="true" dst-required="false"/>
+
+<extension name="pgcrypto">
+	<schema name="auth"/>
+	<comment><![CDATA[Provides cryptographic functions]]></comment>
+</extension>
+
+<usertype name="jwt_claims" configuration="composite">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<typeattrib name="role">
+		<type name="text"/>
+	</typeattrib>
+	<typeattrib name="email_address">
+		<type name="text"/>
+	</typeattrib>
+	<typeattrib name="expires">
+		<type name="integer"/>
+	</typeattrib>
+</usertype>
+
+<function name="login"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="STABLE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="auth.jwt_claims"/>
+	</return-type>
+	<parameter name="email_address" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="password" in="true">
+		<type name="text"/>
+	</parameter>
+	<definition><![CDATA[declare
+  _role name;
+  _email_address text;
+  result auth.jwt_claims;
+begin
+  -- check email and password
+  select auth.user_role(email_address, "password") 
+  into _role;
+
+  if _role is null then
+    raise invalid_password using message = 'invalid e-mail address or password';
+  end if;
+
+  -- set email
+  _email_address := email_address;
+  
+  -- check verified flag
+  select verified 
+  from auth."user" as u 
+  where u.email_address = _email_address 
+  limit 1 
+  into _verified;
+  
+  if not _verified then
+    raise invalid_authorization_specification using message = 'user is not verified';
+  end if;
+
+  -- assign values to result
+  select 
+	_role as "role", 
+	login.email_address as email_address, 
+	extract(epoch from now())::integer + 60 * 60 as expires
+  into result;
+  
+  return result;
+end;]]></definition>
+</function>
+
+<function name="check_role"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="STABLE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+  if not exists (select 1 from pg_roles as r where r.rolname = new."role") then
+    raise foreign_key_violation using message =
+      'unknown database role: ' || new."role";
+    return null;
+  end if;
+
+  return new;
+end;]]></definition>
+</function>
+
+<trigger name="af_user_upsert" firing-type="AFTER" per-line="false" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="auth.&quot;user&quot;">
+		<comment><![CDATA[Ensures the role of the user exists]]></comment>
+		<function signature="auth.check_role()"/>
+</trigger>
+
+<function name="current_email"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="text"/>
+	</return-type>
+	<definition><![CDATA[begin
+  return current_setting('postgrest.claims.email');
+end;]]></definition>
+</function>
+
+<function name="signup"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void"/>
+	</return-type>
+	<parameter name="email_address" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="password" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="first_name" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="last_name" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="date_of_birth" in="true">
+		<type name="date"/>
+	</parameter>
+	<definition><![CDATA[declare
+  _id integer;
+
+begin
+  _id := insert into auth."user" 
+    (email_address, "password") 
+  values
+    (signup.email_address, signup."password")
+  returning id;
+
+  insert into public.diver
+    (id, first_name, last_name, date_of_birth)
+  values
+    (_id, signup.first_name, signup.last_name, signup.date_of_birth);
+]]></definition>
+</function>
+
+<usertype name="tokens" configuration="enumeration">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<enumeration values="password_reset,email_validate"/>
+</usertype>
+
+<table name="token">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<position x="580" y="103"/>
+	<column name="token" not-null="true">
+		<type name="uuid"/>
+	</column>
+	<column name="type" not-null="true">
+		<type name="auth.tokens"/>
+	</column>
+	<column name="email_address" not-null="true">
+		<type name="text"/>
+	</column>
+	<column name="created_at" not-null="true" default-value="current_date">
+		<type name="timestamptz"/>
+	</column>
+	<constraint name="pk_token" type="pk-constr" table="auth.token">
+		<columns names="token" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="fk_user_email" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="CASCADE" del-action="CASCADE" ref-table="auth.&quot;user&quot;" table="auth.token">
+	<columns names="email_address" ref-type="src-columns"/>
+	<columns names="email_address" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="user_has_many_token" type="relfk"
+	 src-table="auth.token"
+	 dst-table="auth.&quot;user&quot;"
+	 src-required="false" dst-required="false"/>
+
 <permission>
 	<object name="public.dive" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="public.dive_site" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="public.country" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="public.diver" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="public.water_condition" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="public.water_exposure" type="table"/>
-	<roles names="divelog_webuser"/>
+	<roles names="divelog_member"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="auth.&quot;user&quot;" type="table"/>
+	<roles names="divelog_member"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="auth.user_role(IN text,IN text)" type="function"/>
+	<roles names="divelog_guest"/>
+	<privileges execute="true"/>
 </permission>
 </dbmodel>
