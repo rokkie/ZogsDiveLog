@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
+<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,186" last-zoom="1"
 	 default-schema="public" default-owner="divelog_admin">
 <role name="divelog_admin"
       superuser="true"
@@ -39,7 +39,7 @@ ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 <table name="country">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1160" y="600"/>
+	<position x="1140" y="740"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -313,7 +313,7 @@ ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 <table name="dive_site">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1160" y="300"/>
+	<position x="1140" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -402,7 +402,7 @@ INSERT INTO public.water_exposure (exposure) VALUES ('boots');
 INSERT INTO public.water_exposure (exposure) VALUES ('gloves');
 INSERT INTO public.water_exposure (exposure) VALUES ('cap');
 ]]></appended-sql>
-	<position x="80" y="580"/>
+	<position x="60" y="720"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -431,7 +431,7 @@ INSERT INTO public.water_condition (condition) VALUES ('boat');
 INSERT INTO public.water_condition (condition) VALUES ('current');
 INSERT INTO public.water_condition (condition) VALUES ('surf');
 INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sql>
-	<position x="60" y="440"/>
+	<position x="40" y="580"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -454,7 +454,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="dive">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="640" y="260"/>
+	<position x="620" y="400"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 	</column>
@@ -600,7 +600,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="user">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
-	<position x="60" y="40"/>
+	<position x="40" y="40"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
 		<comment><![CDATA[User ID]]></comment>
@@ -635,7 +635,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="diver">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="60" y="280"/>
+	<position x="60" y="460"/>
 	<column name="first_name" not-null="true">
 		<type name="text"/>
 	</column>
@@ -678,6 +678,10 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
     new."password" = crypt(new."password", gen_salt('bf'));
   end if;
 
+	if tg_op = 'UPDATE' and new.email_address <> old.email_address then
+		new.enabled = false;
+	end if;
+
   return new;
 end;]]></definition>
 </function>
@@ -702,7 +706,7 @@ end;]]></definition>
 	<comment><![CDATA[Gets role for a user]]></comment>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="text"/>
+	<type name="name"/>
 	</return-type>
 	<parameter name="email_address" in="true">
 		<type name="text"/>
@@ -710,12 +714,16 @@ end;]]></definition>
 	<parameter name="password" in="true">
 		<type name="text"/>
 	</parameter>
-	<definition><![CDATA[begin
-  return (
-  	select role from auth.user
-   	where auth.user.email_address = user_role.email_address
-    and auth.user."password" = crypt(user_role."password", auth.user."password")
-  );
+	<definition><![CDATA[declare
+	_role name;
+begin
+	select "role" 
+	from auth."user"
+  where auth.user.email_address = lower(user_role.email_address)
+	and auth.user."password" = crypt(user_role."password", auth.user."password")
+	into _role;
+
+  return _role;
 end;]]></definition>
 </function>
 
@@ -781,6 +789,7 @@ end;]]></definition>
 	<definition><![CDATA[declare
   _role name;
   _email_address text;
+  _enabled boolean;
   result auth.jwt_claims;
 begin
   -- check email and password
@@ -792,23 +801,23 @@ begin
   end if;
 
   -- set email
-  _email_address := email_address;
+  _email_address := lower(email_address);
   
   -- check verified flag
-  select verified 
+  select u.enabled 
   from auth."user" as u 
   where u.email_address = _email_address 
   limit 1 
-  into _verified;
+  into _enabled;
   
-  if not _verified then
-    raise invalid_authorization_specification using message = 'user is not verified';
+  if not _enabled then
+    raise invalid_authorization_specification using message = 'user is not enabled';
   end if;
 
   -- assign values to result
   select 
 	_role as "role", 
-	login.email_address as email_address, 
+	_email_address as email_address, 
 	extract(epoch from now())::integer + 60 * 60 as expires
   into result;
   
@@ -816,7 +825,7 @@ begin
 end;]]></definition>
 </function>
 
-<function name="check_role"
+<function name="af_user_upsert"
 		window-func="false"
 		returns-setof="false"
 		behavior-type="CALLED ON NULL INPUT"
@@ -830,22 +839,49 @@ end;]]></definition>
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
-	<definition><![CDATA[begin
-  if not exists (select 1 from pg_roles as r where r.rolname = new."role") then
+	<definition><![CDATA[declare
+	_has_role boolean;
+	_token uuid;
+	_type auth.tokens default 'email_validate';
+	_expires timestamptz;
+begin
+	select exists (
+		select 1 
+		from pg_roles as r 
+		where r.rolname = new."role"
+	) into _has_role;
+
+  if not _has_role then
     raise foreign_key_violation using message =
       'unknown database role: ' || new."role";
     return null;
   end if;
 
+	if false = new.enabled then
+		select gen_random_uuid() into _token;
+		select current_timestamp + interval '3 day' into _expires;
+
+		insert into auth.token
+			(token, "type", email_address, expires_at)
+		values
+			(_token, _type, new.email_address, _expires);
+
+		perform pg_notify(_type, json_build_object(
+			'token', _token,
+			'type', _type,
+			'email', new.email_address
+		)::text);
+	end if;
+
   return new;
 end;]]></definition>
 </function>
 
-<trigger name="af_user_upsert" firing-type="AFTER" per-line="false" constraint="false"
+<trigger name="af_user_upsert" firing-type="AFTER" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="auth.&quot;user&quot;">
 		<comment><![CDATA[Ensures the role of the user exists]]></comment>
-		<function signature="auth.check_role()"/>
+		<function signature="auth.af_user_upsert()"/>
 </trigger>
 
 <function name="current_email"
@@ -856,7 +892,7 @@ end;]]></definition>
 		security-type="SECURITY INVOKER"
 		execution-cost="1"
 		row-amount="0">
-	<schema name="public"/>
+	<schema name="auth"/>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
@@ -898,7 +934,6 @@ end;]]></definition>
 	</parameter>
 	<definition><![CDATA[declare
   _id integer;
-
 begin
   _id := insert into auth."user" 
     (email_address, "password") 
@@ -910,7 +945,7 @@ begin
     (id, first_name, last_name, date_of_birth)
   values
     (_id, signup.first_name, signup.last_name, signup.date_of_birth);
-]]></definition>
+end;]]></definition>
 </function>
 
 <usertype name="tokens" configuration="enumeration">
@@ -922,7 +957,7 @@ begin
 <table name="token">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
-	<position x="560" y="40"/>
+	<position x="500" y="40"/>
 	<column name="token" not-null="true">
 		<type name="uuid"/>
 	</column>
@@ -932,13 +967,330 @@ begin
 	<column name="email_address" not-null="true">
 		<type name="text"/>
 	</column>
-	<column name="created_at" not-null="true" default-value="current_date">
+	<column name="expires_at" not-null="true" default-value="current_date + 1">
 		<type name="timestamptz"/>
 	</column>
 	<constraint name="pk_token" type="pk-constr" table="auth.token">
 		<columns names="token" ref-type="src-columns"/>
 	</constraint>
 </table>
+
+<view name="user">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="60" y="283"/>
+	<reference table="auth.&quot;user&quot;" column="email_address" alias="au"/>
+	<reference alias="&quot;password&quot;">
+		<expression><![CDATA['*****'::text]]></expression>
+	</reference>
+	<reference table="auth.&quot;user&quot;" column="role" alias="au"/>
+	<reference table="auth.&quot;user&quot;" column="enabled" alias="au"/>
+	<reference>
+		<expression><![CDATA[(select rolname from pg_authid where pg_has_role(current_user, oid, 'member')) as member_of]]></expression>
+	</reference>
+	<reference>
+		<expression><![CDATA[au.role = member_of.rolname]]></expression>
+	</reference>
+	<expression type="select-exp">0,1,2,3</expression>
+	<expression type="from-exp">0,4</expression>
+	<expression type="simple-exp">5</expression>
+</view>
+
+<relationship name="rel_user_user" type="reltv"
+	 src-table="public.&quot;user&quot;"
+	 dst-table="auth.&quot;user&quot;"
+	 src-required="false" dst-required="false"/>
+
+<function name="clearance_for_role"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void"/>
+	</return-type>
+	<parameter name="u" in="true">
+		<type name="name"/>
+	</parameter>
+	<definition><![CDATA[declare
+  _has_clearance boolean;
+begin
+  select exists (
+		select rolname
+    from pg_authid
+    where pg_has_role(current_user, oid, 'member')
+    and rolname = u
+  ) into _has_clearance;
+  
+	if not _has_clearance then
+    raise invalid_password using message =
+      'current user not member of role ' || u;
+  end if;
+end;]]></definition>
+</function>
+
+<function name="in_insert_user"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+	perform auth.clearance_for_role(new."role");
+
+	insert into auth."user"
+		(email_address, "password", "role", enabled)
+	values
+		(new.email_address, new."password", new."role", false);
+
+	return new;
+end;]]></definition>
+</function>
+
+<trigger name="in_insert_user" firing-type="INSTEAD OF" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="false" trunc-event="false"
+	 table="public.&quot;user&quot;">
+		<function signature="auth.in_insert_user()"/>
+</trigger>
+
+<function name="in_update_user"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+	perform auth.clearance_for_role(new."role");
+
+	update auth."user"
+	set email_address = new.email_address,
+		"password" = new."password"
+	where email_address = lower(old.email_address);
+
+	return new;
+end;]]></definition>
+</function>
+
+<trigger name="in_update_user" firing-type="INSTEAD OF" per-line="true" constraint="false"
+	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
+	 table="public.&quot;user&quot;">
+		<function signature="auth.in_update_user()"/>
+</trigger>
+
+<function name="in_delete_user"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+	delete from auth."user"
+	where email_address = lower(old.email_address);
+
+	return null;
+end;]]></definition>
+</function>
+
+<trigger name="in_delete_user" firing-type="INSTEAD OF" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="false" trunc-event="false"
+	 table="public.&quot;user&quot;">
+		<function signature="auth.in_delete_user()"/>
+</trigger>
+
+<function name="request_password_reset"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void"/>
+	</return-type>
+	<parameter name="email_address" in="true">
+		<type name="text"/>
+	</parameter>
+	<definition><![CDATA[declare
+	_token uuid;
+	_type text default 'password_reset';
+begin
+	delete from auth.token
+	where "type" = _type
+	and email_address = lower(request_password_reset.email_address);
+
+	select gen_random_uuid() into _token;
+
+	insert into auth.token
+		("token", "type", email_address)
+	values
+		(_token, _type, request_password_reset.email_address);
+
+	perform pg_notify(_type, json_build_object(
+		'email', lower(request_password_reset.email_address),
+		'token', _token,
+		'type', _type
+	)::text);
+end;]]></definition>
+</function>
+
+<function name="reset_password"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void"/>
+	</return-type>
+	<parameter name="email_address" in="true">
+		<type name="text"/>
+	</parameter>
+	<parameter name="token" in="true">
+		<type name="uuid"/>
+	</parameter>
+	<parameter name="password" in="true">
+		<type name="text"/>
+	</parameter>
+	<definition><![CDATA[declare
+	_token uuid;
+	_type text default 'password_reset';
+	_has_token boolean;
+begin
+	select exists (
+		select 1
+		from auth.token as tk
+		where tk.email_address = lower(password_reset.email_address)
+		and tk.token = password_reset.token
+		and tk."type" = auth.tokens.password_reset
+		and tk.expires_at <= current_date
+	) into _has_token;
+
+	if _has_token then
+		update auth."user"
+		set "password" = password_reset."password"
+		where email_address = password_reset.email_address;
+
+		delete from auth."user"
+		where tk.email_address = lower(password_reset.email_address)
+		and tk.token = password_reset.token
+		and tk."type" = _token;		
+	else
+		raise invalid_password using message =
+			'invalid user or token';
+	end if;
+end;]]></definition>
+</function>
+
+<function name="bf_token_upsert"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[begin
+	new.email_address = lower(new.email_address);
+
+	return new;
+end;]]></definition>
+</function>
+
+<trigger name="bf_token_upsert" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
+	 table="auth.token">
+		<function signature="auth.bf_token_upsert()"/>
+</trigger>
+
+<index name="idx_email_address" table="auth.&quot;user&quot;"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<column name="email_address"/>
+		</idxelement>
+</index>
+
+<function name="bf_dive_write"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<definition><![CDATA[declare
+	_own boolean;
+begin
+	select exists (
+		select 1
+		from auth."user" as u
+		inner join public.diver as ud on u.id = new.diver_id
+		where u.email_address = auth.current_email()
+	) into _own;
+
+	if false = _own then
+		raise invalid_password using message = 
+			'user not owner of record';
+	end if;
+end;]]></definition>
+</function>
+
+<trigger name="bf_dive_write" firing-type="BEFORE" per-line="true" constraint="false"
+	 ins-event="true" del-event="true" upd-event="true" trunc-event="false"
+	 table="public.dive">
+		<function signature="auth.bf_dive_write()"/>
+</trigger>
 
 <constraint name="fk_user_email" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="auth.&quot;user&quot;" table="auth.token">
