@@ -756,7 +756,7 @@ end;]]></definition>
 	<definition><![CDATA[declare
 	_role name;
 begin
-	select "role" 
+	select "role"
 	from auth."user"
   where auth.user.email_address = lower(user_role.email_address)
 	and auth.user."password" = auth.crypt(auth.sha512(user_role."password"), auth.user."password")
@@ -812,7 +812,7 @@ end;]]></definition>
   result auth.jwt_claims;
 begin
   -- check email and password
-  select auth.user_role(email_address, "password") 
+  select auth.user_role(email_address, "password")
   into _role;
 
   if _role is null then
@@ -821,25 +821,25 @@ begin
 
   -- set email
   _email_address := lower(email_address);
-  
+
   -- check verified flag
-  select u.enabled 
-  from auth."user" as u 
-  where u.email_address = _email_address 
-  limit 1 
+  select u.enabled
+  from auth."user" as u
+  where u.email_address = _email_address
+  limit 1
   into _enabled;
-  
+
   if not _enabled then
     raise invalid_authorization_specification using message = 'user is not enabled';
   end if;
 
   -- assign values to result
-  select 
-	_role as "role", 
-	_email_address as email_address, 
+  select
+	_role as "role",
+	_email_address as email_address,
 	extract(epoch from now())::integer + 60 * 60 as expires
   into result;
-  
+
   return result;
 end;]]></definition>
 </function>
@@ -865,8 +865,8 @@ end;]]></definition>
 	_expires timestamptz;
 begin
 	select exists (
-		select 1 
-		from pg_roles as r 
+		select 1
+		from pg_roles as r
 		where r.rolname = new."role"
 	) into _has_role;
 
@@ -1017,7 +1017,7 @@ begin
     where pg_has_role(current_user, oid, 'member')
     and rolname = u
   ) into _has_clearance;
-  
+
 	if not _has_clearance then
     raise invalid_password using message =
       'current user not member of role ' || u;
@@ -1182,7 +1182,7 @@ begin
 		delete from auth.token
 		where tk.email_address = lower(password_reset.email_address)
 		and tk.token = password_reset.token
-		and tk."type" = _type;		
+		and tk."type" = _type;
 	else
 		raise invalid_password using message =
 			'invalid user or token';
@@ -1345,16 +1345,16 @@ end;]]></definition>
   _id integer;
 	_result public.signup_result;
 begin
-  insert into auth."user" 
-		(email_address, "password") 
-  values 
+  insert into auth."user"
+		(email_address, "password")
+  values
 		(signup.email_address, signup."password")
   returning id into _id;
 
   insert into public.diver (id, first_name, last_name, date_of_birth)
   values (_id, signup.first_name, signup.last_name, signup.date_of_birth);
 
-	select 
+	select
 		lower(signup.email_address),
 		signup.first_name, signup.last_name
 	into _result;
