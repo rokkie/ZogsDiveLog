@@ -1,11 +1,8 @@
-var semver        = require('semver');
-var chalk         = require('chalk');
-var packageConfig = require('../package.json');
-var exec          = function (cmd) {
-  return require('child_process').execSync(cmd).toString().trim();
-};
-
-var versionRequirements = [{
+const semver              = require('semver'),
+      chalk               = require('chalk'),
+      packageConfig       = require('../package.json'),
+      exec                = cmd => require('child_process').execSync(cmd).toString().trim();
+const versionRequirements = [{
   name              : 'node',
   currentVersion    : semver.clean(process.version),
   versionRequirement: packageConfig.engines.node
@@ -15,12 +12,12 @@ var versionRequirements = [{
   versionRequirement: packageConfig.engines.npm
 }];
 
-module.exports = function () {
-  var warnings = [],
-      i;
+module.exports = () => {
+  const warnings = [];
+  let i;
 
   for (i = 0; i < versionRequirements.length; i++) {
-    var mod = versionRequirements[i];
+    const mod = versionRequirements[i];
 
     if (!semver.satisfies(mod.currentVersion, mod.versionRequirement)) {
       warnings.push(mod.name + ': ' +
@@ -36,8 +33,7 @@ module.exports = function () {
     console.log();
 
     for (i = 0; i < warnings.length; i++) {
-      var warning = warnings[i];
-      console.log('  ' + warning)
+      console.log(` ${warnings[i]}`);
     }
 
     console.log();

@@ -1,45 +1,45 @@
-var path        = require('path');
-var merge       = require('webpack-merge');
-var baseConfig  = require('../../build/webpack.base.conf');
-var utils       = require('../../build/utils');
-var webpack     = require('webpack');
-var projectRoot = path.resolve(__dirname, '../../');
+const path          = require('path'),
+      merge         = require('webpack-merge'),
+      baseConfig    = require('../../build/webpack.base.conf'),
+      utils         = require('../../build/utils'),
+      webpack       = require('webpack'),
+      projectRoot   = path.resolve(__dirname, '../../'),
+      webpackConfig = merge(baseConfig, {
+        devtool: '#inline-source-map',
 
-var webpackConfig = merge(baseConfig, {
-  // use inline sourcemap for karma-sourcemap-loader
-  module : {
-    loaders: utils.styleLoaders()
-  },
-  devtool: '#inline-source-map',
-  vue    : {
-    loaders: {
-      js: 'isparta'
-    }
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': require('../../config/test.env')
-    })
-  ]
-});
+        plugins: [
+          new webpack.DefinePlugin({
+            'process.env': require('../../config/test.env')
+          })
+        ]
+      });
 
 // no need for app entry during tests
 delete webpackConfig.entry;
 
-// make sure isparta loader is applied before eslint
-webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
-webpackConfig.module.preLoaders.unshift({
+// make sure istanbul-instrumenter loader is applied before eslint
+webpackConfig.module.rules.unshift({
+  enforce: 'pre',
   test   : /\.js$/,
-  loader : 'isparta',
-  include: path.resolve(projectRoot, 'src')
+  include: path.resolve(projectRoot, 'src'),
+  use    : {
+    loader : 'istanbul-instrumenter-loader',
+    options: {
+      esModules: true
+    }
+  }
 });
 
-// only apply babel for test files when using isparta
-webpackConfig.module.loaders.some(function (loader, i) {
-  if (loader.loader === 'babel') {
-    loader.include = path.resolve(projectRoot, 'test/unit');
-    return true;
-  }
+
+utils.modifyLoader(webpackConfig, 'vue', function (loader) {
+  Object.assign(loader.use.options.loaders, utils.joinLoaders({
+    js: ['istanbul-instrumenter-loader', 'babel-loader']
+  }));
+});
+
+utils.modifyLoader(webpackConfig, 'babel', function (loader) {
+  const testRoot = path.resolve(projectRoot, 'test/unit');
+  loader.include = Array.isArray(loader.include) ? loader.include.concat(testRoot) : [loader.include, testRoot];
 });
 
 module.exports = function (config) {
@@ -48,7 +48,7 @@ module.exports = function (config) {
     // 1. install corresponding karma launcher
     //    http://karma-runner.github.io/0.13/config/browsers.html
     // 2. add it to the `browsers` array below.
-    browsers         : ['PhantomJS'],
+    browsers         : ['Chrome'],
     frameworks       : ['mocha', 'sinon-chai'],
     reporters        : ['spec', 'coverage'],
     files            : ['./index.js'],
@@ -61,10 +61,12 @@ module.exports = function (config) {
     },
     coverageReporter : {
       dir      : './coverage',
-      reporters: [
-        {type: 'lcov', subdir: '.'},
-        {type: 'text-summary'}
-      ]
+      reporters: [{
+        type  : 'lcov',
+        subdir: '.'
+      }, {
+        type: 'text-summary'
+      }]
     }
   });
 };

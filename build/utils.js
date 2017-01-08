@@ -1,9 +1,9 @@
-var path              = require('path');
-var config            = require('../config');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path              = require('path'),
+      config            = require('../config'),
+      ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 exports.assetsPath = function (_path) {
-  var assetsSubDirectory = process.env.NODE_ENV === 'production'
+  const assetsSubDirectory = process.env.NODE_ENV === 'production'
     ? config.build.assetsSubDirectory
     : config.dev.assetsSubDirectory;
   return path.posix.join(assetsSubDirectory, _path);
@@ -14,8 +14,8 @@ exports.cssLoaders = function (options) {
 
   // generate loader string to be used with extract text plugin
   function generateLoaders(loaders) {
-    var sourceLoader = loaders.map(function (loader) {
-      var extraParamChar;
+    const sourceLoader = loaders.map(function (loader) {
+      let extraParamChar;
 
       if (/\?/.test(loader)) {
         loader         = loader.replace(/\?/, '-loader?');
@@ -26,15 +26,14 @@ exports.cssLoaders = function (options) {
       }
 
       return loader + (options.sourceMap ? extraParamChar + 'sourceMap' : '');
-    }).join('!');
+    });
 
     // Extract CSS when that option is specified
     // (which is the case during production build)
-    if (options.extract) {
-      return ExtractTextPlugin.extract('vue-style-loader', sourceLoader);
-    } else {
-      return ['vue-style-loader', sourceLoader].join('!');
-    }
+    return (options.extract) ? ExtractTextPlugin.extract({
+        loader        : sourceLoader,
+        fallbackLoader: 'vue-style-loader'
+      }) : ['vue-style-loader'].concat(sourceLoader);
   }
 
   // http://vuejs.github.io/vue-loader/en/configurations/extract-css.html
@@ -51,16 +50,35 @@ exports.cssLoaders = function (options) {
 
 // Generate loaders for standalone style files (outside of .vue)
 exports.styleLoaders = function (options) {
-  var output  = [],
-      loaders = exports.cssLoaders(options),
-      extension;
+  const output  = [],
+        loaders = exports.cssLoaders(options);
+  let extension;
 
   for (extension in loaders) {
     output.push({
-      test  : new RegExp('\\.' + extension + '$'),
-      loader: loaders[extension]
+      test: new RegExp(`\\.${extension}$`),
+      use : loaders[extension]
     })
   }
 
   return output;
+};
+
+// join loaders with a string separator
+exports.joinLoaders = function (loaders, separator = '!') {
+  return Object.keys(loaders).reduce(function (acc, key) {
+    acc[key] = loaders[key].join(separator);
+    return acc;
+  }, {});
+};
+
+// Modify an existing loader in-place
+exports.modifyLoader = function (webpackConfig, loaderName, fn) {
+  const loader = webpackConfig.module.rules.find(function (rule) {
+    return rule.hasOwnProperty('use') && rule.use.hasOwnProperty('loader') && rule.use.loader === `${loaderName}-loader`;
+  });
+
+  if (loader) {
+    fn.apply(undefined, [loader]);
+  }
 };
