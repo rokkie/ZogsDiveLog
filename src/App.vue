@@ -7,11 +7,12 @@
 
 <script>
 import Hello from './components/Hello';
+import Auth from './components/Auth';
 
 export default {
   name: 'app',
   components: {
-    Hello
+    Hello, Auth
   }
 };
 </script>
