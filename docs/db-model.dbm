@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="63,214" last-zoom="1"
+<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
 	 default-schema="public" default-owner="divelog_admin">
 <role name="divelog_admin"
       superuser="true"
@@ -26,7 +26,83 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <database name="divelog" encoding="UTF8" append-at-eod="true">
 	<role name="divelog_admin"/>
 	<tablespace name="pg_default"/>
-	<appended-sql><![CDATA[GRANT divelog_guest, divelog_member TO divelog_rest;
+	<appended-sql><![CDATA[-- row  level security for dive table
+alter table public.dive enable row level security;
+
+drop policy if exists dive_select_own on public.dive;
+create policy dive_select_own on public.dive for select
+using (diver_id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and (email_address = auth.current_email() or "public" = true)
+));
+
+drop policy if exists dive_insert_own on public.dive;
+create policy dive_insert_own on public.dive for insert
+with check (diver_id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and email_address = auth.current_email()
+));
+
+drop policy if exists dive_update_own on public.dive;
+create policy dive_update_own on public.dive for update
+using (diver_id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and email_address = auth.current_email()
+));
+
+drop policy if exists dive_delete_own on public.dive;
+create policy dive_delete_own on public.dive for delete
+using (diver_id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and email_address = auth.current_email()
+));
+
+
+-- row  level security for diver table
+alter table public.diver enable row level security;
+
+drop policy if exists diver_select_own on public.diver;
+create policy diver_select_own on public.diver for select
+using (id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and (email_address = auth.current_email() or "public" = true)
+));
+
+drop policy if exists diver_insert_own on public.diver;
+create policy diver_insert_own on public.diver for insert
+with check (true);
+
+drop policy if exists diver_update_own on public.diver;
+create policy diver_update_own on public.diver for update
+using (id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and email_address = auth.current_email()
+));
+
+drop policy if exists diver_delete_own on public.diver;
+create policy diver_delete_own on public.diver for delete
+using (id = (
+    select id
+    from auth."user"
+    where enabled = true
+    and email_address = auth.current_email()
+));
+
+
+-- 
+GRANT divelog_guest, divelog_member TO divelog_rest;
 
 ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
 </database>
@@ -454,44 +530,6 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 <table name="dive">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<appended-sql><![CDATA[alter table public.dive enable row level security;
-
-drop policy if exists dive_select_own on public.dive;
-create policy dive_select_own on public.dive for select
-using (diver_id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-
-drop policy if exists dive_insert_own on public.dive;
-create policy dive_insert_own on public.dive for insert
-using (diver_id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-
-drop policy if exists dive_update_own on public.dive;
-create policy dive_update_own on public.dive for update
-using (diver_id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-
-drop policy if exists dive_delete_own on public.dive;
-create policy dive_delete_own on public.dive for delete
-using (diver_id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-]]></appended-sql>
 	<position x="620" y="400"/>
 	<column name="id" not-null="true">
 		<type name="serial"/>
@@ -652,35 +690,6 @@ using (diver_id = (
 <table name="diver">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<appended-sql><![CDATA[alter table public.diver enable row level security;
-
-drop policy if exists diver_select_own on public.diver;
-create policy diver_select_own on public.diver for select
-using (id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-
-drop policy if exists diver_update_own on public.diver;
-create policy diver_update_own on public.diver for update
-using (id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-
-drop policy if exists diver_delete_own on public.diver;
-create policy diver_delete_own on public.diver for delete
-using (id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and email_address = auth.current_email()
-));
-]]></appended-sql>
 	<position x="60" y="460"/>
 	<column name="first_name" not-null="true">
 		<type name="text"/>
@@ -977,6 +986,10 @@ end;]]></definition>
 	<column name="enabled" not-null="true" default-value="false">
 		<type name="bool"/>
 	</column>
+	<column name="public" not-null="true" default-value="false">
+		<type name="boolean"/>
+		<comment><![CDATA[If the users data can be seen by other users]]></comment>
+	</column>
 	<constraint name="pk_user" type="pk-constr" table="auth.&quot;user&quot;">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1227,7 +1240,8 @@ end;]]></definition>
 	</reference>
 	<reference table="auth.&quot;user&quot;" column="role" alias="au"/>
 	<reference table="auth.&quot;user&quot;" column="enabled" alias="au"/>
-	<reference>
+	<reference table="auth.&quot;user&quot;" column="public" alias="au"/>
+	<reference alias="member_of">
 		<expression><![CDATA[(select rolname from pg_authid where pg_has_role(current_user, oid, 'member')) as member_of]]></expression>
 	</reference>
 	<reference>
@@ -1238,9 +1252,9 @@ end;]]></definition>
 	au.role <> 'divelog_member' or au.email_address = auth.current_email()
 )]]></expression>
 	</reference>
-	<expression type="select-exp">0,1,2,3</expression>
-	<expression type="from-exp">0,4</expression>
-	<expression type="simple-exp">5,6</expression>
+	<expression type="select-exp">0,1,2,3,4</expression>
+	<expression type="from-exp">0,5</expression>
+	<expression type="simple-exp">6,7</expression>
 </view>
 
 <relationship name="rel_user_user" type="reltv"
