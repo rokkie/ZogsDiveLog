@@ -1,0 +1,26 @@
+{
+  "name": "zogs-divelog-server",
+  "version": "0.0.1",
+  "description": "REST API for Zogs' Divelog",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "postgrest postgres://divelog_rest:pass@localhost:5432/divelog -a divelog_guest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/rokkie/ZogsDiveLogServer.git"
+  },
+  "author": "Rocco Bruyn",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://gitlab.com/rokkie/ZogsDiveLogServer/issues"
+  },
+  "homepage": "https://gitlab.com/rokkie/ZogsDiveLogServer#README",
+  "devDependencies": {
+    "pg-pubsub": "^0.3.0"
+  }
+}
