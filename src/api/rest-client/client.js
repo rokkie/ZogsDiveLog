@@ -34,7 +34,7 @@ export default class RestClient {
    *
    * @param   {String}                  fn    Function name to call
    * @param   {Object<String, String>}  args  Key/Value object with arguments
-   * @return  {*}
+   * @return  {Promise<Object>}
    */
   rpc(fn, args = {}) {
     const internal = ns(this),
