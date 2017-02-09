@@ -47,6 +47,7 @@
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.14.1",
     "extract-text-webpack-plugin": "^2.0.0-rc",
+    "fetch-mock": "^5.9.3",
     "file-loader": "^0.10.0",
     "function-bind": "^1.0.2",
     "html-webpack-plugin": "^2.28.0",
