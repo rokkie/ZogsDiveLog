@@ -104,7 +104,8 @@ using (id = (
 -- 
 GRANT divelog_guest, divelog_member TO divelog_rest;
 
-ALTER DATABASE divelog SET postgrest.claims.email TO '';]]></appended-sql>
+ALTER DATABASE divelog SET request.jwt.claim.email_address TO '';
+ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
 </database>
 
 <schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
@@ -780,17 +781,11 @@ end;]]></definition>
 	<comment><![CDATA[Provides cryptographic functions]]></comment>
 </extension>
 
-<usertype name="jwt_claims" configuration="composite">
+<usertype name="jwt_token" configuration="composite">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
 	<typeattrib name="role">
 		<type name="text"/>
-	</typeattrib>
-	<typeattrib name="email_address">
-		<type name="text"/>
-	</typeattrib>
-	<typeattrib name="expires">
-		<type name="integer"/>
 	</typeattrib>
 </usertype>
 
@@ -806,7 +801,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="auth.jwt_claims"/>
+	<type name="auth.jwt_token"/>
 	</return-type>
 	<parameter name="email_address" in="true">
 		<type name="text"/>
@@ -843,10 +838,15 @@ begin
   end if;
 
   -- assign values to result
-  select
-	_role as "role",
-	_email_address as email_address,
-	extract(epoch from now())::integer + 60 * 60 as expires
+	select jwt.sign(
+		row_to_json(r), current_setting('app.jwt_secret')
+	) as token
+	from (
+	  select
+		_role as "role",
+		_email_address as email_address,
+		extract(epoch from now())::integer + 60 * 60 as expires
+	) as r
   into result;
 
   return result;
@@ -920,7 +920,7 @@ end;]]></definition>
 	<type name="text"/>
 	</return-type>
 	<definition><![CDATA[begin
-  return current_setting('postgrest.claims.email_address');
+  return current_setting('request.jwt.claim.email_address');
 end;]]></definition>
 </function>
 
@@ -1455,6 +1455,11 @@ begin
 end;
 ]]></definition>
 </function>
+
+<extension name="pgjwt">
+	<schema name="auth"/>
+	<comment><![CDATA[JSON Web Token]]></comment>
+</extension>
 
 <constraint name="fk_user_email" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="auth.&quot;user&quot;" table="auth.token">

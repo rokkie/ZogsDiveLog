@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "postgrest postgres://divelog_rest:pass@localhost:5432/divelog -a divelog_guest"
+    "start": "postgrest postgrest.conf"
   },
   "repository": {
     "type": "git",
