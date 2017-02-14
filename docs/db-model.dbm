@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.8.2" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.0-beta" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
 	 default-schema="public" default-owner="divelog_admin">
 <role name="divelog_admin"
       superuser="true"
@@ -116,13 +116,13 @@ ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
 	<role name="divelog_admin"/>
 	<position x="1140" y="740"/>
 	<column name="id" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="name" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="code" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<constraint name="pk_country" type="pk-constr" table="public.country">
 		<columns names="id" ref-type="src-columns"/>
@@ -390,10 +390,10 @@ ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
 	<role name="divelog_admin"/>
 	<position x="1140" y="440"/>
 	<column name="id" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="location" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 		<comment><![CDATA[Arbitrary name for the site]]></comment>
 	</column>
 	<column name="latitude" not-null="true">
@@ -403,7 +403,7 @@ ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
 		<type name="decimal" length="9" precision="6"/>
 	</column>
 	<column name="description">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<constraint name="pk_dive_site" type="pk-constr" table="public.dive_site">
 		<columns names="id" ref-type="src-columns"/>
@@ -462,10 +462,10 @@ ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
 	<schema name="public"/>
 	<role name="divelog_admin"/>
 	<typeattrib name="capacity">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 	</typeattrib>
 	<typeattrib name="material">
-		<type name="public.material"/>
+		<type name="public.material" length="1"/>
 	</typeattrib>
 </usertype>
 
@@ -481,10 +481,10 @@ INSERT INTO public.water_exposure (exposure) VALUES ('cap');
 ]]></appended-sql>
 	<position x="60" y="720"/>
 	<column name="id" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="exposure" not-null="true">
-		<type name="public.&quot;waterExposure&quot;"/>
+		<type name="public.&quot;waterExposure&quot;" length="1"/>
 	</column>
 	<constraint name="pk_water_exposure" type="pk-constr" table="public.water_exposure">
 		<columns names="id" ref-type="src-columns"/>
@@ -510,10 +510,10 @@ INSERT INTO public.water_condition (condition) VALUES ('surf');
 INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sql>
 	<position x="40" y="580"/>
 	<column name="id" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="condition" not-null="true">
-		<type name="public.&quot;waterCondition&quot;"/>
+		<type name="public.&quot;waterCondition&quot;" length="1"/>
 	</column>
 	<constraint name="pk_water_condition" type="pk-constr" table="public.water_condition">
 		<columns names="id" ref-type="src-columns"/>
@@ -533,88 +533,88 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	<role name="divelog_admin"/>
 	<position x="620" y="400"/>
 	<column name="id" not-null="true">
-		<type name="serial"/>
+		<type name="serial" length="1"/>
 	</column>
 	<column name="dive_nr" not-null="true">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 	</column>
 	<column name="depth" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Maximum depth reached]]></comment>
 	</column>
 	<column name="date" not-null="true">
-		<type name="date"/>
+		<type name="date" length="1"/>
 		<comment><![CDATA[Date the dive took place]]></comment>
 	</column>
 	<column name="safety_stop" not-null="true">
-		<type name="boolean"/>
+		<type name="boolean" length="1"/>
 		<comment><![CDATA[If a safety stop was done]]></comment>
 	</column>
 	<column name="bottom_time" not-null="true">
-		<type name="tinterval"/>
+		<type name="tinterval" length="1"/>
 		<comment><![CDATA[Time spent under water]]></comment>
 	</column>
 	<column name="time_in" not-null="true">
-		<type name="time with time zone" with-timezone="true"/>
+		<type name="time with time zone" length="1" with-timezone="true"/>
 		<comment><![CDATA[Time decend started]]></comment>
 	</column>
 	<column name="time_out" not-null="true">
-		<type name="time with time zone" with-timezone="true"/>
+		<type name="time with time zone" length="1" with-timezone="true"/>
 		<comment><![CDATA[Time ascend started]]></comment>
 	</column>
 	<column name="tank_pressure_start" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Tank pressure before entering]]></comment>
 	</column>
 	<column name="tank_pressure_end" not-null="true">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Tank pressure after surfacing]]></comment>
 	</column>
 	<column name="cylinder" not-null="true">
-		<type name="public.cylinder"/>
+		<type name="public.cylinder" length="1"/>
 	</column>
 	<column name="water_type" not-null="true">
-		<type name="public.&quot;waterType&quot;"/>
+		<type name="public.&quot;waterType&quot;" length="1"/>
 		<comment><![CDATA[Water type]]></comment>
 	</column>
 	<column name="surface_interval">
-		<type name="tinterval"/>
+		<type name="tinterval" length="1"/>
 		<comment><![CDATA[Time between two dives]]></comment>
 	</column>
 	<column name="pressure_group_start">
-		<type name="character"/>
+		<type name="character" length="1"/>
 		<comment><![CDATA[Pressure group before entering]]></comment>
 	</column>
 	<column name="pressure_group_end">
-		<type name="character"/>
+		<type name="character" length="1"/>
 		<comment><![CDATA[Pressure group after surfacing]]></comment>
 	</column>
 	<column name="weight">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Weight carried]]></comment>
 	</column>
 	<column name="visibility">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Visibility distance]]></comment>
 	</column>
 	<column name="temperature_air">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Air temperature]]></comment>
 	</column>
 	<column name="temperature_surface">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Water temperature at the surface]]></comment>
 	</column>
 	<column name="temperature_bottom">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Water temperature at the bottom]]></comment>
 	</column>
 	<column name="rating">
-		<type name="smallint"/>
+		<type name="smallint" length="1"/>
 		<comment><![CDATA[Star rating for this dive]]></comment>
 	</column>
 	<column name="comment">
-		<type name="text"/>
+		<type name="text" length="1"/>
 		<comment><![CDATA[Additional comments]]></comment>
 	</column>
 	<constraint name="pk_dive" type="pk-constr" table="public.dive">
@@ -693,13 +693,13 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	<role name="divelog_admin"/>
 	<position x="60" y="460"/>
 	<column name="first_name" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="last_name" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="date_of_birth" not-null="true">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</column>
 
 	<customidxs object-type="column">
@@ -725,7 +725,7 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	<comment><![CDATA[Hashes the users password and converts e-mail address to lowercase]]></comment>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
   new.email_address = lower(new.email_address);
@@ -755,13 +755,13 @@ end;]]></definition>
 	<comment><![CDATA[Gets role for a user]]></comment>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="name"/>
+	<type name="name" length="1"/>
 	</return-type>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="password" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
 	_role name;
@@ -785,7 +785,7 @@ end;]]></definition>
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
 	<typeattrib name="role">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</typeattrib>
 </usertype>
 
@@ -801,13 +801,13 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="auth.jwt_token"/>
+	<type name="auth.jwt_token" length="1"/>
 	</return-type>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="password" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
   _role name;
@@ -865,7 +865,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[declare
 	_has_role boolean;
@@ -917,7 +917,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="text"/>
+	<type name="text" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
   return current_setting('request.jwt.claim.email_address');
@@ -928,13 +928,13 @@ end;]]></definition>
 	<schema name="public"/>
 	<role name="divelog_admin"/>
 	<typeattrib name="email_address">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</typeattrib>
 	<typeattrib name="first_name">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</typeattrib>
 	<typeattrib name="last_name">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</typeattrib>
 </usertype>
 
@@ -949,16 +949,16 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<position x="500" y="40"/>
 	<column name="token" not-null="true">
-		<type name="uuid"/>
+		<type name="uuid" length="1"/>
 	</column>
 	<column name="type" not-null="true">
-		<type name="auth.tokens"/>
+		<type name="auth.tokens" length="1"/>
 	</column>
 	<column name="email_address" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="expires_at" not-null="true" default-value="current_date + 1">
-		<type name="timestamptz"/>
+		<type name="timestamptz" length="1"/>
 	</column>
 	<constraint name="pk_token" type="pk-constr" table="auth.token">
 		<columns names="token" ref-type="src-columns"/>
@@ -970,24 +970,24 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<position x="40" y="40"/>
 	<column name="id" not-null="true" sequence="auth.seq_user_id">
-		<type name="integer"/>
+		<type name="integer" length="1"/>
 		<comment><![CDATA[User ID]]></comment>
 	</column>
 	<column name="email_address" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="password" not-null="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</column>
 	<column name="role" not-null="true" default-value="'divelog_member'">
-		<type name="name"/>
+		<type name="name" length="1"/>
 		<comment><![CDATA[Database role of the user]]></comment>
 	</column>
 	<column name="enabled" not-null="true" default-value="false">
-		<type name="bool"/>
+		<type name="bool" length="1"/>
 	</column>
 	<column name="public" not-null="true" default-value="false">
-		<type name="boolean"/>
+		<type name="boolean" length="1"/>
 		<comment><![CDATA[If the users data can be seen by other users]]></comment>
 	</column>
 	<constraint name="pk_user" type="pk-constr" table="auth.&quot;user&quot;">
@@ -1016,10 +1016,10 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="u" in="true">
-		<type name="name"/>
+		<type name="name" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
   _has_clearance boolean;
@@ -1050,7 +1050,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
 	perform auth.clearance_for_role(new."role");
@@ -1074,7 +1074,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
 	perform auth.clearance_for_role(new."role");
@@ -1100,7 +1100,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
 	delete from auth."user"
@@ -1122,10 +1122,10 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
 	_token uuid;
@@ -1162,16 +1162,16 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="void"/>
+	<type name="void" length="1"/>
 	</return-type>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="token" in="true">
-		<type name="uuid"/>
+		<type name="uuid" length="1"/>
 	</parameter>
 	<parameter name="password" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
 	_token uuid;
@@ -1215,7 +1215,7 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="trigger"/>
+	<type name="trigger" length="1"/>
 	</return-type>
 	<definition><![CDATA[begin
 	new.email_address = lower(new.email_address);
@@ -1338,22 +1338,22 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="public.signup_result"/>
+	<type name="public.signup_result" length="1"/>
 	</return-type>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="password" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="first_name" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="last_name" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<parameter name="date_of_birth" in="true">
-		<type name="date"/>
+		<type name="date" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
   _id integer;
@@ -1389,13 +1389,13 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="boolean"/>
+	<type name="boolean" length="1"/>
 	</return-type>
 	<parameter name="token" in="true">
-		<type name="uuid"/>
+		<type name="uuid" length="1"/>
 	</parameter>
 	<parameter name="email_address" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
 	_type auth.tokens default 'email_validate';
@@ -1439,10 +1439,10 @@ end;]]></definition>
 	<role name="divelog_admin"/>
 	<language name="plpgsql" sql-disabled="true"/>
 	<return-type>
-	<type name="text"/>
+	<type name="text" length="1"/>
 	</return-type>
 	<parameter name="data" in="true">
-		<type name="text"/>
+		<type name="text" length="1"/>
 	</parameter>
 	<definition><![CDATA[declare
   _hash bytea;
