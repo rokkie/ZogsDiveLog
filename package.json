@@ -21,6 +21,7 @@
   },
   "homepage": "https://gitlab.com/rokkie/ZogsDiveLogServer#README",
   "devDependencies": {
+    "newman": "^3.4.2",
     "pg-pubsub": "^0.3.0"
   }
 }
