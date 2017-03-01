@@ -784,7 +784,7 @@ end;]]></definition>
 <usertype name="jwt_token" configuration="composite">
 	<schema name="auth"/>
 	<role name="divelog_admin"/>
-	<typeattrib name="role">
+	<typeattrib name="token">
 		<type name="text" length="1"/>
 	</typeattrib>
 </usertype>
@@ -813,7 +813,7 @@ end;]]></definition>
   _role name;
   _email_address text;
   _enabled boolean;
-  result auth.jwt_claims;
+  result auth.jwt_token;
 begin
   -- check email and password
   select auth.user_role(email_address, "password")
