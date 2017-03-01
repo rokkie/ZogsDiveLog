@@ -1461,6 +1461,26 @@ end;
 	<comment><![CDATA[JSON Web Token]]></comment>
 </extension>
 
+<function name="ping"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="STABLE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="text" length="0"/>
+	</return-type>
+	<definition><![CDATA[begin
+	return 'pong';
+end
+]]></definition>
+</function>
+
 <constraint name="fk_user_email" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="auth.&quot;user&quot;" table="auth.token">
 	<columns names="email_address" ref-type="src-columns"/>
@@ -1659,6 +1679,11 @@ end;
 </permission>
 <permission>
 	<object name="public.validate_email(IN uuid,IN text)" type="function"/>
+	<roles names="divelog_guest"/>
+	<privileges execute="true"/>
+</permission>
+<permission>
+	<object name="public.ping()" type="function"/>
 	<roles names="divelog_guest"/>
 	<privileges execute="true"/>
 </permission>
