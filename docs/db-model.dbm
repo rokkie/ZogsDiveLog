@@ -105,7 +105,7 @@ using (id = (
 GRANT divelog_guest, divelog_member TO divelog_rest;
 
 ALTER DATABASE divelog SET request.jwt.claim.email_address TO '';
-ALTER DATABASE divelog SET app.jwt_secret TO '!!secret!!';]]></appended-sql>
+ALTER DATABASE divelog SET app.jwt_secret TO 'secret';]]></appended-sql>
 </database>
 
 <schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
