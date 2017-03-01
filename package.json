@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "test/pre-test.js",
+    "test": "newman run --suppress-exit-code --reporters cli,html test/Divelog.postman_collection.json",
+    "posttest": "test/post-test.js",
     "start": "postgrest postgrest.conf"
   },
   "repository": {
@@ -21,6 +23,7 @@
   },
   "homepage": "https://gitlab.com/rokkie/ZogsDiveLogServer#README",
   "devDependencies": {
+    "newman": "^3.4.2",
     "pg-pubsub": "^0.3.0"
   }
 }
