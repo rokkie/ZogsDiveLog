@@ -838,7 +838,7 @@ begin
   end if;
 
   -- assign values to result
-	select jwt.sign(
+	select sign(
 		row_to_json(r), current_setting('app.jwt_secret')
 	) as token
 	from (
