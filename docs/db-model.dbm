@@ -387,43 +387,13 @@ ALTER DATABASE divelog SET app.jwt_secret TO 'secret';]]></appended-sql>
 	</initial-data>
 </table>
 
-<table name="dive_site">
+<sequence name="seq_dive_site_id"
+	 start="1" increment="1"
+	 min-value="0" max-value="2147483647"
+	 cache="1" cycle="false">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="1140" y="440"/>
-	<column name="id" not-null="true">
-		<type name="serial" length="1"/>
-	</column>
-	<column name="location" not-null="true">
-		<type name="text" length="1"/>
-		<comment><![CDATA[Arbitrary name for the site]]></comment>
-	</column>
-	<column name="latitude" not-null="true">
-		<type name="decimal" length="8" precision="6"/>
-	</column>
-	<column name="longitude" not-null="true">
-		<type name="decimal" length="9" precision="6"/>
-	</column>
-	<column name="description">
-		<type name="text" length="1"/>
-	</column>
-	<constraint name="pk_dive_site" type="pk-constr" table="public.dive_site">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-
-	<customidxs object-type="column">
-		<object name="country_id" index="1"/>
-	</customidxs>
-
-	<customidxs object-type="constraint">
-		<object name="fk_country" index="1"/>
-	</customidxs>
-	<initial-data>
-<![CDATA[id•country_id•location•latitude•longitude⸣
-•134•Um El Faroud•35.8190594•14.447566⸣
-•134•Rozi•35.989101•14.326601]]>
-	</initial-data>
-</table>
+</sequence>
 
 <usertype name="waterType" configuration="enumeration">
 	<schema name="public"/>
@@ -436,17 +406,6 @@ ALTER DATABASE divelog SET app.jwt_secret TO 'secret';]]></appended-sql>
 	<role name="divelog_admin"/>
 	<enumeration values="aluminium,steel"/>
 </usertype>
-
-<relationship name="country_has_many_divesite" type="rel1n"
-	 src-col-pattern="{st}_{sc}"
-	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
-	 src-fk-pattern="fk_{st}"
-	 custom-color="#91d75a"
-	 src-table="public.country"
-	 dst-table="public.dive_site"
-	 src-required="true" dst-required="false"
-	upd-action="CASCADE"
-	del-action="RESTRICT"/>
 
 <usertype name="waterExposure" configuration="enumeration">
 	<schema name="public"/>
@@ -530,153 +489,17 @@ INSERT INTO public.water_condition (condition) VALUES ('surge');]]></appended-sq
 	</initial-data>
 </table>
 
-<table name="dive">
+<sequence name="seq_dive_id"
+	 start="1" increment="1"
+	 min-value="0" max-value="2147483647"
+	 cache="1" cycle="false">
 	<schema name="public"/>
 	<role name="divelog_admin"/>
-	<position x="620" y="400"/>
-	<column name="id" not-null="true">
-		<type name="serial" length="1"/>
-	</column>
-	<column name="dive_nr" not-null="true">
-		<type name="integer" length="1"/>
-	</column>
-	<column name="depth" not-null="true">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Maximum depth reached]]></comment>
-	</column>
-	<column name="date" not-null="true">
-		<type name="date" length="1"/>
-		<comment><![CDATA[Date the dive took place]]></comment>
-	</column>
-	<column name="safety_stop" not-null="true">
-		<type name="boolean" length="1"/>
-		<comment><![CDATA[If a safety stop was done]]></comment>
-	</column>
-	<column name="bottom_time" not-null="true">
-		<type name="tinterval" length="1"/>
-		<comment><![CDATA[Time spent under water]]></comment>
-	</column>
-	<column name="time_in" not-null="true">
-		<type name="time with time zone" length="1" with-timezone="true"/>
-		<comment><![CDATA[Time decend started]]></comment>
-	</column>
-	<column name="time_out" not-null="true">
-		<type name="time with time zone" length="1" with-timezone="true"/>
-		<comment><![CDATA[Time ascend started]]></comment>
-	</column>
-	<column name="tank_pressure_start" not-null="true">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Tank pressure before entering]]></comment>
-	</column>
-	<column name="tank_pressure_end" not-null="true">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Tank pressure after surfacing]]></comment>
-	</column>
-	<column name="cylinder" not-null="true">
-		<type name="public.cylinder" length="1"/>
-	</column>
-	<column name="water_type" not-null="true">
-		<type name="public.&quot;waterType&quot;" length="1"/>
-		<comment><![CDATA[Water type]]></comment>
-	</column>
-	<column name="surface_interval">
-		<type name="tinterval" length="1"/>
-		<comment><![CDATA[Time between two dives]]></comment>
-	</column>
-	<column name="pressure_group_start">
-		<type name="character" length="1"/>
-		<comment><![CDATA[Pressure group before entering]]></comment>
-	</column>
-	<column name="pressure_group_end">
-		<type name="character" length="1"/>
-		<comment><![CDATA[Pressure group after surfacing]]></comment>
-	</column>
-	<column name="weight">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Weight carried]]></comment>
-	</column>
-	<column name="visibility">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Visibility distance]]></comment>
-	</column>
-	<column name="temperature_air">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Air temperature]]></comment>
-	</column>
-	<column name="temperature_surface">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Water temperature at the surface]]></comment>
-	</column>
-	<column name="temperature_bottom">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Water temperature at the bottom]]></comment>
-	</column>
-	<column name="rating">
-		<type name="smallint" length="1"/>
-		<comment><![CDATA[Star rating for this dive]]></comment>
-	</column>
-	<column name="comment">
-		<type name="text" length="1"/>
-		<comment><![CDATA[Additional comments]]></comment>
-	</column>
-	<constraint name="pk_dive" type="pk-constr" table="public.dive">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="ck_rating" type="ck-constr" table="public.dive">
-			<expression><![CDATA[dive.rating > 0 and dive.rating <= 5]]></expression>
-	</constraint>
-
-	<customidxs object-type="column">
-		<object name="dive_site_id" index="2"/>
-		<object name="diver_id" index="1"/>
-	</customidxs>
-
-	<customidxs object-type="constraint">
-		<object name="fk_dive_site" index="2"/>
-		<object name="fk_diver" index="3"/>
-	</customidxs>
-</table>
-
-<relationship name="divesite_has_many_dive" type="rel1n"
-	 src-col-pattern="{st}_{sc}"
-	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
-	 src-fk-pattern="fk_{st}"
-	 custom-color="#e6b995"
-	 src-table="public.dive_site"
-	 dst-table="public.dive"
-	 src-required="true" dst-required="false"
-	upd-action="CASCADE"
-	del-action="RESTRICT"/>
+</sequence>
 
 <schema name="auth" rect-visible="true" fill-color="#e1e1e1">
 	<role name="divelog_admin"/>
 </schema>
-
-<relationship name="many_dive_has_many_water_exposure" type="relnn"
-	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
-	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
-	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
-	 pk-col-pattern="id"
-	 custom-color="#c42b74"
-	 src-table="public.dive"
-	 dst-table="public.water_exposure"
-	 src-required="false" dst-required="false"
-	 table-name="many_dive_has_many_water_exposure"
-	upd-action="CASCADE"
-	del-action="RESTRICT"/>
-
-<relationship name="many_dive_has_many_water_condition" type="relnn"
-	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
-	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
-	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
-	 pk-col-pattern="id"
-	 custom-color="#c4321a"
-	 src-table="public.dive"
-	 dst-table="public.water_condition"
-	 src-required="false" dst-required="false"
-	 table-name="many_dive_has_many_water_condition"
-	upd-action="CASCADE"
-	del-action="RESTRICT"/>
 
 <extension name="citext">
 	<schema name="public"/>
@@ -1277,17 +1100,6 @@ end;]]></definition>
 	upd-action="CASCADE"
 	del-action="CASCADE"/>
 
-<relationship name="diver_has_many_dive" type="rel1n"
-	 src-col-pattern="{st}_{sc}"
-	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
-	 src-fk-pattern="fk_{st}"
-	 custom-color="#f91d3a"
-	 src-table="public.diver"
-	 dst-table="public.dive"
-	 src-required="true" dst-required="false"
-	upd-action="CASCADE"
-	del-action="CASCADE"/>
-
 <trigger name="bf_user_upsert" firing-type="BEFORE" per-line="true" constraint="false"
 	 ins-event="true" del-event="false" upd-event="true" trunc-event="false"
 	 table="auth.&quot;user&quot;">
@@ -1482,6 +1294,266 @@ end;
 end
 ]]></definition>
 </function>
+
+<table name="dive">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="620" y="400"/>
+	<column name="id" not-null="true" sequence="public.seq_dive_id">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="dive_nr" not-null="true">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="depth" not-null="true">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Maximum depth reached]]></comment>
+	</column>
+	<column name="date" not-null="true">
+		<type name="date" length="1"/>
+		<comment><![CDATA[Date the dive took place]]></comment>
+	</column>
+	<column name="safety_stop" not-null="true">
+		<type name="boolean" length="1"/>
+		<comment><![CDATA[If a safety stop was done]]></comment>
+	</column>
+	<column name="bottom_time" not-null="true">
+		<type name="tinterval" length="1"/>
+		<comment><![CDATA[Time spent under water]]></comment>
+	</column>
+	<column name="time_in" not-null="true">
+		<type name="time with time zone" length="1" with-timezone="true"/>
+		<comment><![CDATA[Time decend started]]></comment>
+	</column>
+	<column name="time_out" not-null="true">
+		<type name="time with time zone" length="1" with-timezone="true"/>
+		<comment><![CDATA[Time ascend started]]></comment>
+	</column>
+	<column name="tank_pressure_start" not-null="true">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Tank pressure before entering]]></comment>
+	</column>
+	<column name="tank_pressure_end" not-null="true">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Tank pressure after surfacing]]></comment>
+	</column>
+	<column name="cylinder" not-null="true">
+		<type name="public.cylinder" length="1"/>
+	</column>
+	<column name="water_type" not-null="true">
+		<type name="public.&quot;waterType&quot;" length="1"/>
+		<comment><![CDATA[Water type]]></comment>
+	</column>
+	<column name="surface_interval">
+		<type name="tinterval" length="1"/>
+		<comment><![CDATA[Time between two dives]]></comment>
+	</column>
+	<column name="pressure_group_start">
+		<type name="character" length="1"/>
+		<comment><![CDATA[Pressure group before entering]]></comment>
+	</column>
+	<column name="pressure_group_end">
+		<type name="character" length="1"/>
+		<comment><![CDATA[Pressure group after surfacing]]></comment>
+	</column>
+	<column name="weight">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Weight carried]]></comment>
+	</column>
+	<column name="visibility">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Visibility distance]]></comment>
+	</column>
+	<column name="temperature_air">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Air temperature]]></comment>
+	</column>
+	<column name="temperature_surface">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Water temperature at the surface]]></comment>
+	</column>
+	<column name="temperature_bottom">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Water temperature at the bottom]]></comment>
+	</column>
+	<column name="rating">
+		<type name="smallint" length="1"/>
+		<comment><![CDATA[Star rating for this dive]]></comment>
+	</column>
+	<column name="comment">
+		<type name="text" length="1"/>
+		<comment><![CDATA[Additional comments]]></comment>
+	</column>
+	<constraint name="pk_dive" type="pk-constr" table="public.dive">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ck_rating" type="ck-constr" table="public.dive">
+			<expression><![CDATA[dive.rating > 0 and dive.rating <= 5]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="dive_site_id" index="2"/>
+		<object name="diver_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fk_dive_site" index="2"/>
+		<object name="fk_diver" index="3"/>
+	</customidxs>
+</table>
+
+<table name="dive_site">
+	<schema name="public"/>
+	<role name="divelog_admin"/>
+	<position x="1140" y="440"/>
+	<column name="id" not-null="true" sequence="public.seq_dive_site_id">
+		<type name="integer" length="1"/>
+	</column>
+	<column name="location" not-null="true">
+		<type name="text" length="1"/>
+		<comment><![CDATA[Arbitrary name for the site]]></comment>
+	</column>
+	<column name="latitude" not-null="true">
+		<type name="decimal" length="8" precision="6"/>
+	</column>
+	<column name="longitude" not-null="true">
+		<type name="decimal" length="9" precision="6"/>
+	</column>
+	<column name="description">
+		<type name="text" length="1"/>
+	</column>
+	<constraint name="pk_dive_site" type="pk-constr" table="public.dive_site">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ck_latitude" type="ck-constr" table="public.dive_site">
+			<expression><![CDATA[-90 <= latitude  and 90 >= latitude]]></expression>
+	</constraint>
+	<constraint name="ck_longitude" type="ck-constr" table="public.dive_site">
+			<expression><![CDATA[-180 <= longitude and 180 >= longitude]]></expression>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="country_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fk_country" index="1"/>
+	</customidxs>
+	<initial-data>
+<![CDATA[id•country_id•location•latitude•longitude⸣
+•134•Um El Faroud•35.8190594•14.447566⸣
+•134•Rozi•35.989101•14.326601]]>
+	</initial-data>
+</table>
+
+<relationship name="country_has_many_divesite" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#91d75a"
+	 src-table="public.country"
+	 dst-table="public.dive_site"
+	 src-required="true" dst-required="false"
+	upd-action="CASCADE"
+	del-action="RESTRICT"/>
+
+<relationship name="divesite_has_many_dive" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#e6b995"
+	 src-table="public.dive_site"
+	 dst-table="public.dive"
+	 src-required="true" dst-required="false"
+	upd-action="CASCADE"
+	del-action="RESTRICT"/>
+
+<relationship name="many_dive_has_many_water_exposure" type="relnn"
+	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
+	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
+	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
+	 pk-col-pattern="id"
+	 custom-color="#c42b74"
+	 src-table="public.dive"
+	 dst-table="public.water_exposure"
+	 src-required="false" dst-required="false"
+	 table-name="many_dive_has_many_water_exposure"
+	upd-action="CASCADE"
+	del-action="RESTRICT"/>
+
+<relationship name="many_dive_has_many_water_condition" type="relnn"
+	 src-col-pattern="{st}_{sc}" dst-col-pattern="{dt}_{sc}"
+	 pk-pattern="pk_{gt}" uq-pattern="uq_{gt}"
+	 src-fk-pattern="fk_{st}" dst-fk-pattern="fk_{dt}"
+	 pk-col-pattern="id"
+	 custom-color="#c4321a"
+	 src-table="public.dive"
+	 dst-table="public.water_condition"
+	 src-required="false" dst-required="false"
+	 table-name="many_dive_has_many_water_condition"
+	upd-action="CASCADE"
+	del-action="RESTRICT"/>
+
+<relationship name="diver_has_many_dive" type="rel1n"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="pk_{dt}" uq-pattern="uq_{dt}"
+	 src-fk-pattern="fk_{st}"
+	 custom-color="#f91d3a"
+	 src-table="public.diver"
+	 dst-table="public.dive"
+	 src-required="true" dst-required="false"
+	upd-action="CASCADE"
+	del-action="CASCADE"/>
+
+<function name="in_delete_diver"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[begin
+	delete from auth."user"
+	where id = old.id;
+
+	return null;
+end;]]></definition>
+</function>
+
+<function name="af_diver_delete"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="auth"/>
+	<role name="divelog_admin"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="0"/>
+	</return-type>
+	<definition><![CDATA[begin
+	delete from auth."user"
+	where id = old.id;
+
+	return null;
+end;]]></definition>
+</function>
+
+<trigger name="af_diver_delete" firing-type="AFTER" per-line="true" constraint="false"
+	 ins-event="false" del-event="true" upd-event="false" trunc-event="false"
+	 table="public.diver">
+		<function signature="auth.af_diver_delete()"/>
+</trigger>
 
 <constraint name="fk_user_email" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="CASCADE" del-action="CASCADE" ref-table="auth.&quot;user&quot;" table="auth.token">
@@ -1688,5 +1760,20 @@ end
 	<object name="public.ping()" type="function"/>
 	<roles names="divelog_guest"/>
 	<privileges execute="true"/>
+</permission>
+<permission>
+	<object name="public.seq_dive_site_id" type="sequence"/>
+	<roles names="divelog_member"/>
+	<privileges select="true" usage="true"/>
+</permission>
+<permission>
+	<object name="public.seq_dive_id" type="sequence"/>
+	<roles names="divelog_member"/>
+	<privileges select="true" usage="true"/>
+</permission>
+<permission>
+	<object name="auth" type="schema"/>
+	<roles names="divelog_member"/>
+	<privileges usage="true"/>
 </permission>
 </dbmodel>
