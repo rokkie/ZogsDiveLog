@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.0-beta" author="Rocco Bruyn" last-position="0,0" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.0-beta" author="Rocco Bruyn" last-position="0,105" last-zoom="1"
 	 default-schema="public" default-owner="divelog_admin">
 <role name="divelog_admin"
       superuser="true"
@@ -1318,7 +1318,7 @@ end
 		<comment><![CDATA[If a safety stop was done]]></comment>
 	</column>
 	<column name="bottom_time" not-null="true">
-		<type name="tinterval" length="1"/>
+		<type name="interval" length="1"/>
 		<comment><![CDATA[Time spent under water]]></comment>
 	</column>
 	<column name="time_in" not-null="true">
@@ -1345,7 +1345,7 @@ end
 		<comment><![CDATA[Water type]]></comment>
 	</column>
 	<column name="surface_interval">
-		<type name="tinterval" length="1"/>
+		<type name="interval" length="1"/>
 		<comment><![CDATA[Time between two dives]]></comment>
 	</column>
 	<column name="pressure_group_start">
