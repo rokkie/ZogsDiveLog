@@ -1450,7 +1450,7 @@ end;]]></definition>
   _hash bytea;
 	_hex name;
 begin
-	_hash = auth.crypt(sha512.data, 'sha512');
+	_hash = crypt(sha512.data, 'sha512');
 	_hex  = encode(_hash, 'hex');
 
 	return _hex;
