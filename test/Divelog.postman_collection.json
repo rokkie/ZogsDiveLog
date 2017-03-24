@@ -745,7 +745,7 @@
 					"mode": "raw",
 					"raw": "{\n\t\"id\": 123,\n\t\"date_of_birth\": \"05-05-2005\"\n}"
 				},
-				"description": "Cannot update diver for other user"
+				"description": "Update own diver"
 			},
 			"response": []
 		},
@@ -822,6 +822,218 @@
 				],
 				"body": {},
 				"description": "List all dives"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Unauthorized\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 401']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t123,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"P T 45 M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": {\n\t\t\"capacity\": 12,\n\t\t\"material\": \"steel\"\n\t}\n}"
+				},
+				"description": "Anonymous user cannot create dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('row-level security');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t456,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"PT45M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": \"(12,steel)\"\n}"
+				},
+				"description": "Cannot create dive for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"diver_id\", \"dive_site_id\", \"dive_nr\", \"depth\", \"safety_stop\", \"bottom_time\", \"time_in\", \"time_out\", \"tank_pressure_start\", \"tank_pressure_end\", \"cylinder\", \"water_type\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"diver_id\": \"integer\",",
+							"            \"dive_site_id\": \"integer\",",
+							"            \"dive_nr\": \"integer\",",
+							"            \"depth\": \"integer\",",
+							"            \"safety_stop\": \"boolean\",",
+							"            \"bottom_time\": \"string\",",
+							"            \"time_in\": \"string\",",
+							"            \"time_out\": \"string\",",
+							"            \"tank_pressure_start\": \"integer\",",
+							"            \"tank_pressure_end\": \"integer\",",
+							"            \"cylinder\": {",
+							"                \"type\": \"object\",",
+							"                \"required\": [\"capacity\", \"material\"],",
+							"                \"properties\": {",
+							"                    \"capacity\": \"integer\",",
+							"                    \"material\": \"string\"",
+							"                }",
+							"            },",
+							"            \"water_type\": \"string\",",
+							"            \"surface_interval\": \"string\",",
+							"            \"pressure_group_start\": \"string\",",
+							"            \"pressure_group_end\": \"string\",",
+							"            \"weight\": \"integer\",",
+							"            \"visibility\": \"integer\",",
+							"            \"temperature_air\": \"integer\",",
+							"            \"temperature_surface\": \"integer\",",
+							"            \"temperature_bottom\": \"integer\",",
+							"            \"rating\": \"integer\",",
+							"            \"comment\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code201       = responseCode.code === 201;",
+							"const statusCreated = responseCode.name.has('Created');",
+							"const responseData  = (code201) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 201']          = code201;",
+							"tests['Status code name has string'] = statusCreated;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t123,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"PT45M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": \"(12,steel)\"\n}"
+				},
+				"description": "Create a new dive"
 			},
 			"response": []
 		},

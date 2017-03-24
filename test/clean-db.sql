@@ -16,3 +16,5 @@ WHERE email_address = 'new-user@example.com';
 
 DELETE FROM public."dive_site"
 WHERE location = 'Twiske Paviljoen';
+
+DELETE FROM public."dive";
