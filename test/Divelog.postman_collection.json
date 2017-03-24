@@ -478,6 +478,316 @@
 			"response": []
 		},
 		{
+			"name": "Diver - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('row-level security');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 999,\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot create a new diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Signup failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code409        = responseCode.code === 409;",
+							"const statusConflict = responseCode.name.has('Conflict');",
+							"const responseData   = (code409) ? JSON.parse(responseBody) : null;",
+							"const schemaValid    = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 409']          = code409;",
+							"tests['Status code name has string'] = statusConflict;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('duplicate key');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 123,\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot create a new diver for own user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Update (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('row-level security');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 456,\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot update diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Diver list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Diver\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"first_name\", \"last_name\", \"date_of_birth\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"first_name\": \"string\",",
+							"            \"last_name\": \"string\",",
+							"            \"date_of_birth\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Data updated'] = responseData[0].date_of_birth = '05-05-2005';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 123,\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot update diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver -Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code204         = responseCode.code === 204;",
+							"const statusNoContent = responseCode.name.has('No Content');",
+							"",
+							"tests['Status code is 204']          = code204;",
+							"tests['Status code name has string'] = statusNoContent;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.456",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Cannot delete diver for other user"
+			},
+			"response": []
+		},
+		{
 			"name": "Dive - List",
 			"event": [
 				{
@@ -637,6 +947,83 @@
 				],
 				"body": {},
 				"description": "List all dive sites"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive Site list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive Site\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"country_id\", \"location\", \"latitude\", \"longitude\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"country_id\": \"integer\",",
+							"            \"location\": \"string\",",
+							"            \"latitude\": \"number\",",
+							"            \"longitude\": \"number\",",
+							"            \"description\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code201       = responseCode.code === 201;",
+							"const statusCreated = responseCode.name.has('Created');",
+							"const responseData  = (code201) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 201']          = code201;",
+							"tests['Status code name has string'] = statusCreated;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"country_id\": 152,\n\t\"location\": \"Twiske Paviljoen\",\n\t\"latitude\": 52.4506391,\n\t\"longitude\": 4.883359,\n\t\"description\": \"Lorem ipsum dolor sampit\"\n}"
+				},
+				"description": "Create a new dive site"
 			},
 			"response": []
 		},
@@ -1351,6 +1738,77 @@
 					"raw": ""
 				},
 				"description": "Water exposure should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver -Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Diver list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Diver\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"first_name\", \"last_name\", \"date_of_birth\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"first_name\": \"string\",",
+							"            \"last_name\": \"string\",",
+							"            \"date_of_birth\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"const listLenght   = (schemaValid) ? 1 === responseData.length : null;",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"tests['List length']                 = listLenght;",
+							"",
+							"if (schemaValid) {",
+							"   tests['Diver ID is correct'] = responseData[0].id = 123;",
+							"} else {",
+							"     console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.123",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Cannot delete diver for own user"
 			},
 			"response": []
 		},
