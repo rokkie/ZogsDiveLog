@@ -36,7 +36,7 @@ using (diver_id in (
   from auth."user"
   where enabled = true
   and email_address = auth.current_email()
-  or "public" = true
+  or (enabled = true and "public" = true)
 ));
 
 drop policy if exists dive_insert_own on public.dive;
@@ -77,7 +77,7 @@ using (id in (
   from auth."user"
   where enabled = true
   and email_address = auth.current_email()
-  or public = true
+  or (enabled = true and "public" = true)
 ));
 
 drop policy if exists diver_insert_own on public.diver;
