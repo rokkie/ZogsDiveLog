@@ -31,11 +31,12 @@ alter table public.dive enable row level security;
 
 drop policy if exists dive_select_own on public.dive;
 create policy dive_select_own on public.dive for select
-using (diver_id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and (email_address = auth.current_email() or "public" = true)
+using (diver_id in (
+  select id
+  from auth."user"
+  where enabled = true
+  and email_address = auth.current_email()
+  or "public" = true
 ));
 
 drop policy if exists dive_insert_own on public.dive;
@@ -71,11 +72,12 @@ alter table public.diver enable row level security;
 
 drop policy if exists diver_select_own on public.diver;
 create policy diver_select_own on public.diver for select
-using (id = (
-    select id
-    from auth."user"
-    where enabled = true
-    and (email_address = auth.current_email() or "public" = true)
+using (id in (
+  select id
+  from auth."user"
+  where enabled = true
+  and email_address = auth.current_email()
+  or public = true
 ));
 
 drop policy if exists diver_insert_own on public.diver;
