@@ -771,7 +771,7 @@ begin
 	select "role"
 	from auth."user"
   where auth.user.email_address = lower(user_role.email_address)
-	and auth.user."password" = crypt(auth.shsha512(user_role."password"), auth.user."password")
+	and auth.user."password" = crypt(auth.sha512(user_role."password"), auth.user."password")
 	into _role;
 
   return _role;
