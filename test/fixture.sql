@@ -52,34 +52,43 @@ VALUES
   (357, 'Ed', 'Hooydonck, van', '05-05-2005');
 
 
+-- Dive Sites
+INSERT INTO public."dive_site"
+  (id, country_id, location, latitude, longitude)
+VALUES
+  (1, 134, 'Um El Faroud', 35.8190594, 14.447566),
+  (2, 134, 'Rozi', 35.989101, 14.326601),
+  (3, 113, 'Lake Winston', 41.648650, 129.581299);
+
+
 -- Dives for user Henk (authenticated user)
 INSERT INTO public."dive"
-  (diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
+  (id, diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
 VALUES
-  (123, 1, 10, 15, '01-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (123, 1, 11, 15, '02-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (123, 1, 12, 15, '03-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
+  (1, 123, 1, 10, 15, '01-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (2, 123, 1, 11, 15, '02-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (3, 123, 1, 12, 15, '03-01-2010', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
 
 -- Dives for user Tsjabbe (non-public user, enabled)
 INSERT INTO public."dive"
-  (diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
+  (id, diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
 VALUES
-  (159, 1, 21, 15, '01-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (159, 1, 22, 15, '02-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (159, 1, 23, 15, '03-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
+  (4, 159, 1, 21, 15, '01-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (5, 159, 1, 22, 15, '02-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (6, 159, 1, 23, 15, '03-02-2020', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
 
 -- Dives for user Koos (public user, enabled)
 INSERT INTO public."dive"
-  (diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
+  (id, diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
 VALUES
-  (789, 1, 30, 15, '01-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (789, 1, 31, 15, '02-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (789, 1, 32, 15, '03-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
+  (7, 789, 1, 30, 15, '01-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (8, 789, 1, 31, 15, '02-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (9, 789, 1, 32, 15, '03-03-2030', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
 
 -- Dives for user Ed (public user, disabled)
 INSERT INTO public."dive"
-  (diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
+  (id, diver_id, dive_site_id, dive_nr, depth, date, safety_stop, bottom_time, time_in, time_out, tank_pressure_start, tank_pressure_end, cylinder, water_type)
 VALUES
-  (357, 1, 40, 15, '01-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (357, 1, 41, 15, '02-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
-  (357, 1, 42, 15, '03-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
+  (10, 357, 1, 40, 15, '01-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (11, 357, 1, 41, 15, '02-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt'),
+  (12, 357, 1, 42, 15, '03-04-2040', TRUE, INTERVAL 'PT45M', '13:00 UTC', '14:00 UTC', 200, 60, (12, 'steel'), 'salt');
