@@ -26,8 +26,11 @@ $RECYCLE.BIN/
 
 # Icon must end with two \r
 Icon
+
+
 # Thumbnails
 ._*
+
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
@@ -36,6 +39,7 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+
 # Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
@@ -60,16 +64,6 @@ Temporary Items
 .nfs*
 
 
-### Vim ###
-# swap
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-# session
-Session.vim
-# temporary
-.netrwhist
-# auto-generated tag files
-tags
 
 
 ### Node ###
@@ -122,6 +116,18 @@ jspm_packages
 .yarn-integrity
 
 
+### Vim ###
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+# session
+Session.vim
+# temporary
+.netrwhist
+# auto-generated tag files
+tags
+
+
 ### Intellij ###
 .idea
 
@@ -129,6 +135,7 @@ jspm_packages
 ### Testing ###
 test/unit/coverage
 test/e2e/reports
+newman
 selenium-debug.log
 
 

@@ -1,0 +1,2837 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Divelog",
+		"_postman_id": "170788ec-a322-c07a-a5d6-ef82bf11a2a4",
+		"description": "Zogs' Divelog API tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const bodyCorrect  = responseBody === '\"pong\"';",
+							"const nextRequest  = (code200 && statusOk && bodyCorrect) ? 'Signup - Fail (email taken)' : 'Bye';",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Body is correct']             = bodyCorrect;",
+							"",
+							"postman.setNextRequest(nextRequest);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/ping",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Signup - Fail (email taken)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Signup failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code409        = responseCode.code === 409;",
+							"const statusConflict = responseCode.name.has('Conflict');",
+							"const responseData   = (code409) ? JSON.parse(responseBody) : null;",
+							"const schemaValid    = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 409']          = code409;",
+							"tests['Status code name has string'] = statusConflict;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('duplicate key');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/signup",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"user1@example.com\",\n  \"password\": \"foobarbaz\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"date_of_birth\": \"01-01-2000\"\n}"
+				},
+				"description": "Fail to signup because e-mail address is taken"
+			},
+			"response": []
+		},
+		{
+			"name": "Signup - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Signup result\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"email_address\", \"first_name\", \"last_name\"],",
+							"    \"properties\": {",
+							"        \"email_address\": \"string\",",
+							"        \"first_name\": \"string\",",
+							"        \"last_name\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/signup",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"new-user@example.com\",\n  \"password\": \"foobarbaz\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"date_of_birth\": \"01-01-2000\"\n}"
+				},
+				"description": "Successfully sign up when POSTing valid details"
+			},
+			"response": []
+		},
+		{
+			"name": "Signup - Validate Email",
+			"request": {
+				"url": "http://localhost:3000/rpc/validate_email",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"new-user@example.com\",\n  \"token\": \"<UUID>\"\n}"
+				},
+				"description": "Validate E-mail address by POSTing the correct token"
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Fail (non-existent)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Login failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message = 'invalid e-mail address or password';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"non-existent@example.com\",\n  \"password\": \"foobarbaz\"\n}"
+				},
+				"description": "Failed login attempt due to non-existent user"
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Fail (disabled)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Login failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message = 'user is not enabled';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"user2@example.com\",\n  \"password\": \"barbazqux\"\n}"
+				},
+				"description": "Failed login attempt due to disabled account"
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Fail (password)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Login failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message = 'invalid e-mail address or password';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"user1@example.com\",\n  \"password\": \"--incorrect--\"\n}"
+				},
+				"description": "Failed login attempt due to incorrect password"
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Authentication result\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"token\"],",
+							"    \"properties\": {",
+							"        \"token\": {",
+							"            \"type\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    postman.setGlobalVariable('jwt', responseData.token);",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/rpc/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email_address\": \"user1@example.com\",\n  \"password\": \"foobarbaz\"\n}"
+				},
+				"description": "Successfull login attempt"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Diver list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Diver\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"first_name\", \"last_name\", \"date_of_birth\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"first_name\": \"string\",",
+							"            \"last_name\": \"string\",",
+							"            \"date_of_birth\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"const listLenght   = (schemaValid) ? 2 === responseData.length : null;",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"tests['List length']                 = listLenght;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all divers"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('row-level security');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 999,\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot create a new diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Signup failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code409        = responseCode.code === 409;",
+							"const statusConflict = responseCode.name.has('Conflict');",
+							"const responseData   = (code409) ? JSON.parse(responseBody) : null;",
+							"const schemaValid    = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 409']          = code409;",
+							"tests['Status code name has string'] = statusConflict;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('duplicate key');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 123,\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Cannot create a new diver for own user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Update (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code200       = responseCode.code === 200;",
+							"const statusOK      = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const listLength    = (0 === responseData.length);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOK;",
+							"tests['Update count']                = listLength;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.456",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"first_name\": \"Arie\",\n\t\"last_name\": \"Beuker, de\",\n\t\"date_of_birth\": \"10-10-2010\"\n}"
+				},
+				"description": "Cannot update diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"title\": \"Diver\",",
+							"    \"description\": \"Diver\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"id\", \"first_name\", \"last_name\", \"date_of_birth\"],",
+							"    \"properties\": {",
+							"        \"id\": \"integer\",",
+							"        \"first_name\": \"string\",",
+							"        \"last_name\": \"string\",",
+							"        \"date_of_birth\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Data updated'] = responseData.date_of_birth = '05-05-2005';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.123",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"date_of_birth\": \"05-05-2005\"\n}"
+				},
+				"description": "Update own diver"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver -Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code200       = responseCode.code === 200;",
+							"const statusOK      = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const listLength    = (0 === responseData.length);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOK;",
+							"tests['Delete count']                = listLength;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.456",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Cannot delete diver for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"diver_id\", \"dive_site_id\", \"dive_nr\", \"depth\", \"safety_stop\", \"bottom_time\", \"time_in\", \"time_out\", \"tank_pressure_start\", \"tank_pressure_end\", \"cylinder\", \"water_type\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"diver_id\": \"integer\",",
+							"            \"dive_site_id\": \"integer\",",
+							"            \"dive_nr\": \"integer\",",
+							"            \"depth\": \"integer\",",
+							"            \"safety_stop\": \"boolean\",",
+							"            \"bottom_time\": \"string\",",
+							"            \"time_in\": \"string\",",
+							"            \"time_out\": \"string\",",
+							"            \"tank_pressure_start\": \"integer\",",
+							"            \"tank_pressure_end\": \"integer\",",
+							"            \"cylinder\": {",
+							"                \"type\": \"object\",",
+							"                \"required\": [\"capacity\", \"material\"],",
+							"                \"properties\": {",
+							"                    \"capacity\": \"integer\",",
+							"                    \"material\": \"string\"",
+							"                }",
+							"            },",
+							"            \"water_type\": \"string\",",
+							"            \"surface_interval\": \"string\",",
+							"            \"pressure_group_start\": \"string\",",
+							"            \"pressure_group_end\": \"string\",",
+							"            \"weight\": \"integer\",",
+							"            \"visibility\": \"integer\",",
+							"            \"temperature_air\": \"integer\",",
+							"            \"temperature_surface\": \"integer\",",
+							"            \"temperature_bottom\": \"integer\",",
+							"            \"rating\": \"integer\",",
+							"            \"comment\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"const listLenght   = (schemaValid) ? 6 === responseData.length : null;",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"tests['List length']                 = listLenght;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all dives"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Unauthorized\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 401']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t123,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"P T 45 M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": {\n\t\t\"capacity\": 12,\n\t\t\"material\": \"steel\"\n\t}\n}"
+				},
+				"description": "Anonymous user cannot create dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('row-level security');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t456,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"PT45M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": \"(12,steel)\"\n}"
+				},
+				"description": "Cannot create dive for other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"diver_id\", \"dive_site_id\", \"dive_nr\", \"depth\", \"safety_stop\", \"bottom_time\", \"time_in\", \"time_out\", \"tank_pressure_start\", \"tank_pressure_end\", \"cylinder\", \"water_type\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"diver_id\": \"integer\",",
+							"            \"dive_site_id\": \"integer\",",
+							"            \"dive_nr\": \"integer\",",
+							"            \"depth\": \"integer\",",
+							"            \"safety_stop\": \"boolean\",",
+							"            \"bottom_time\": \"string\",",
+							"            \"time_in\": \"string\",",
+							"            \"time_out\": \"string\",",
+							"            \"tank_pressure_start\": \"integer\",",
+							"            \"tank_pressure_end\": \"integer\",",
+							"            \"cylinder\": {",
+							"                \"type\": \"object\",",
+							"                \"required\": [\"capacity\", \"material\"],",
+							"                \"properties\": {",
+							"                    \"capacity\": \"integer\",",
+							"                    \"material\": \"string\"",
+							"                }",
+							"            },",
+							"            \"water_type\": \"string\",",
+							"            \"surface_interval\": \"string\",",
+							"            \"pressure_group_start\": \"string\",",
+							"            \"pressure_group_end\": \"string\",",
+							"            \"weight\": \"integer\",",
+							"            \"visibility\": \"integer\",",
+							"            \"temperature_air\": \"integer\",",
+							"            \"temperature_surface\": \"integer\",",
+							"            \"temperature_bottom\": \"integer\",",
+							"            \"rating\": \"integer\",",
+							"            \"comment\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code201       = responseCode.code === 201;",
+							"const statusCreated = responseCode.name.has('Created');",
+							"const responseData  = (code201) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 201']          = code201;",
+							"tests['Status code name has string'] = statusCreated;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"diver_id\":\t123,\n\t\"dive_site_id\": 1,\n\t\"dive_nr\": 10,\n\t\"depth\": 15,\n\t\"date\": \"01-01-2000\",\n\t\"safety_stop\": true,\n\t\"bottom_time\": \"PT45M\",\n\t\"time_in\": \"13:00 UTC\",\n\t\"time_out\": \"14:00 UTC\",\n\t\"tank_pressure_start\": \"200\",\n\t\"tank_pressure_end\": \"60\",\n\t\"water_type\": \"salt\",\n\t\"cylinder\": \"(12,steel)\"\n}"
+				},
+				"description": "Create a new dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Update (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"comment\": \"Lorem ipsum dolor sampit\"\n}"
+				},
+				"description": "Guest user cannot update dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Update (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code200       = responseCode.code === 200;",
+							"const statusOK      = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const listLength    = (0 === responseData.length);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOK;",
+							"tests['Update count']                = listLength;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.4",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"comment\": \"Lorem ipsum dolor sampit\"\n}"
+				},
+				"description": "Member cannot update dive belonging to other Diver"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"title\": \"Dive\",",
+							"    \"description\": \"Dive\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"id\", \"diver_id\", \"dive_site_id\", \"dive_nr\", \"depth\", \"safety_stop\", \"bottom_time\", \"time_in\", \"time_out\", \"tank_pressure_start\", \"tank_pressure_end\", \"cylinder\", \"water_type\"],",
+							"    \"properties\": {",
+							"        \"id\": \"integer\",",
+							"        \"diver_id\": \"integer\",",
+							"        \"dive_site_id\": \"integer\",",
+							"        \"dive_nr\": \"integer\",",
+							"        \"depth\": \"integer\",",
+							"        \"safety_stop\": \"boolean\",",
+							"        \"bottom_time\": \"string\",",
+							"        \"time_in\": \"string\",",
+							"        \"time_out\": \"string\",",
+							"        \"tank_pressure_start\": \"integer\",",
+							"        \"tank_pressure_end\": \"integer\",",
+							"        \"cylinder\": {",
+							"            \"type\": \"object\",",
+							"            \"required\": [\"capacity\", \"material\"],",
+							"            \"properties\": {",
+							"                \"capacity\": \"integer\",",
+							"                \"material\": \"string\"",
+							"            }",
+							"        },",
+							"        \"water_type\": \"string\",",
+							"        \"surface_interval\": \"string\",",
+							"        \"pressure_group_start\": \"string\",",
+							"        \"pressure_group_end\": \"string\",",
+							"        \"weight\": \"integer\",",
+							"        \"visibility\": \"integer\",",
+							"        \"temperature_air\": \"integer\",",
+							"        \"temperature_surface\": \"integer\",",
+							"        \"temperature_bottom\": \"integer\",",
+							"        \"rating\": \"integer\",",
+							"        \"comment\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200       = responseCode.code === 200;",
+							"const statusCreated = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusCreated;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Data updated'] = responseData.comment = 'Lorem ipsum dolor sampit';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"comment\": \"Lorem ipsum dolor sampit\"\n}"
+				},
+				"description": "Member can update own dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 401']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Guest user cannot delete dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const code200       = responseCode.code === 200;",
+							"const statusOK      = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const listLength    = (0 === responseData.length);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOK;",
+							"tests['Delete count']                = listLength;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.4",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Member cannot delete dive belonging to other user"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive Site list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive Site\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"country_id\", \"location\", \"latitude\", \"longitude\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"country_id\": \"integer\",",
+							"            \"location\": \"string\",",
+							"            \"latitude\": \"number\",",
+							"            \"longitude\": \"number\",",
+							"            \"description\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all dive sites"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive Site list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Dive Site\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"country_id\", \"location\", \"latitude\", \"longitude\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"country_id\": \"integer\",",
+							"            \"location\": \"string\",",
+							"            \"latitude\": \"number\",",
+							"            \"longitude\": \"number\",",
+							"            \"description\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code201       = responseCode.code === 201;",
+							"const statusCreated = responseCode.name.has('Created');",
+							"const responseData  = (code201) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 201']          = code201;",
+							"tests['Status code name has string'] = statusCreated;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"country_id\": 152,\n\t\"location\": \"Twiske Paviljoen\",\n\t\"latitude\": 52.4506391,\n\t\"longitude\": 4.883359,\n\t\"description\": \"Lorem ipsum dolor sampit\"\n}"
+				},
+				"description": "Create a new dive site"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Update (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 401']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site?id=eq.2",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"description\": \"Foo Bar Baz\"\n}"
+				},
+				"description": "Guest user cannot update dive site"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive Site\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"id\", \"country_id\", \"location\", \"latitude\", \"longitude\"],",
+							"    \"properties\": {",
+							"        \"id\": \"integer\",",
+							"        \"country_id\": \"integer\",",
+							"        \"location\": \"string\",",
+							"        \"latitude\": \"number\",",
+							"        \"longitude\": \"number\",",
+							"        \"description\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Data updated'] = responseData.description = 'Foo Bar Baz Qux';",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site?location=eq.Rozi",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"description\": \"Foo Bar Baz Qux\"\n}"
+				},
+				"description": "Member can update dive site"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code401            = responseCode.code === 401;",
+							"const statusUnauthorized = responseCode.name.has('Unauthorized');",
+							"const responseData       = (code401) ? JSON.parse(responseBody) : null;",
+							"const schemaValid        = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 401']          = code401;",
+							"tests['Status code name has string'] = statusUnauthorized;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site?id=eq.2",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Guest uer cannot delete dive site"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Delete (fail)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Delete failure\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code409        = responseCode.code === 409;",
+							"const statusConflict = responseCode.name.has('Conflict');",
+							"const responseData   = (code409) ? JSON.parse(responseBody) : null;",
+							"const schemaValid    = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 409']          = code409;",
+							"tests['Status code name has string'] = statusConflict;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('violates foreign key constraint');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Cannot delete a dive site that is in use"
+			},
+			"response": []
+		},
+		{
+			"name": "Country - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Country list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Country\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"name\", \"code\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"name\": \"string\",",
+							"            \"code\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/country",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all countries"
+			},
+			"response": []
+		},
+		{
+			"name": "Country - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/country",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"FooBar\",\n\t\"code\": \"FB\"\n}"
+				},
+				"description": "Country should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Country - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/country?id=eq.1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"FooBar\",\n\t\"code\": \"FB\"\n}"
+				},
+				"description": "Country should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Country - Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/country?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "Country should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Condition - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Water Condition list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Water Condition\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"condition\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"condition\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_condition",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all water conditions"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Condition - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_condition",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"condition\": \"foobar\"\n}"
+				},
+				"description": "Water conditions should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Condition - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_condition?id=eq.1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"condition\": \"surf\"\n}"
+				},
+				"description": "Water conditions should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Condition - Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_condition?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "Water conditions should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Exposure - List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Water Exposure list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Water Exposure\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"exposure\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"exposure\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_exposure",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "List all water exposures"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Exposure - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_exposure",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"exposure\": \"foobar\"\n}"
+				},
+				"description": "Water exposure should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Exposure - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_exposure?id=eq.1",
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"exposure\": \"shorty\"\n}"
+				},
+				"description": "Water exposure should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Water Exposure - Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Permission denied\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"code\", \"message\"],",
+							"    \"properties\": {",
+							"        \"code\": \"string\",",
+							"        \"message\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code403         = responseCode.code === 403;",
+							"const statusForbidden = responseCode.name.has('Forbidden');",
+							"const responseData    = (code403) ? JSON.parse(responseBody) : null;",
+							"const schemaValid     = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 403']          = code403;",
+							"tests['Status code name has string'] = statusForbidden;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (schemaValid) {",
+							"    tests['Response message'] = responseData.message.has('permission denied');",
+							"} else {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/water_exposure?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "Water exposure should be read-only"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive - Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Dive\",",
+							"    \"title\": \"Dive\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"id\", \"diver_id\", \"dive_site_id\", \"dive_nr\", \"depth\", \"safety_stop\", \"bottom_time\", \"time_in\", \"time_out\", \"tank_pressure_start\", \"tank_pressure_end\", \"cylinder\", \"water_type\"],",
+							"    \"properties\": {",
+							"        \"id\": \"integer\",",
+							"        \"diver_id\": \"integer\",",
+							"        \"dive_site_id\": \"integer\",",
+							"        \"dive_nr\": \"integer\",",
+							"        \"depth\": \"integer\",",
+							"        \"safety_stop\": \"boolean\",",
+							"        \"bottom_time\": \"string\",",
+							"        \"time_in\": \"string\",",
+							"        \"time_out\": \"string\",",
+							"        \"tank_pressure_start\": \"integer\",",
+							"        \"tank_pressure_end\": \"integer\",",
+							"        \"cylinder\": {",
+							"            \"type\": \"object\",",
+							"            \"required\": [\"capacity\", \"material\"],",
+							"            \"properties\": {",
+							"                \"capacity\": \"integer\",",
+							"                \"material\": \"string\"",
+							"            }",
+							"        },",
+							"        \"water_type\": \"string\",",
+							"        \"surface_interval\": \"string\",",
+							"        \"pressure_group_start\": \"string\",",
+							"        \"pressure_group_end\": \"string\",",
+							"        \"weight\": \"integer\",",
+							"        \"visibility\": \"integer\",",
+							"        \"temperature_air\": \"integer\",",
+							"        \"temperature_surface\": \"integer\",",
+							"        \"temperature_bottom\": \"integer\",",
+							"        \"rating\": \"integer\",",
+							"        \"comment\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOK     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOK;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive?id=eq.1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Member can delete own dive"
+			},
+			"response": []
+		},
+		{
+			"name": "Diver -Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"description\": \"Diver list\",",
+							"    \"type\": \"array\",",
+							"    \"items\": {",
+							"        \"title\": \"Diver\",",
+							"        \"type\": \"object\",",
+							"        \"required\": [\"id\", \"first_name\", \"last_name\", \"date_of_birth\"],",
+							"        \"properties\": {",
+							"            \"id\": \"integer\",",
+							"            \"first_name\": \"string\",",
+							"            \"last_name\": \"string\",",
+							"            \"date_of_birth\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"const code200      = responseCode.code === 200;",
+							"const statusOk     = responseCode.name.has('OK');",
+							"const responseData = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid  = tv4.validate(responseData, schema);",
+							"const listLenght   = (schemaValid) ? 1 === responseData.length : null;",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"tests['List length']                 = listLenght;",
+							"",
+							"if (schemaValid) {",
+							"   tests['Diver ID is correct'] = responseData[0].id = 123;",
+							"} else {",
+							"     console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/diver?id=eq.123",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Cannot delete diver for own user"
+			},
+			"response": []
+		},
+		{
+			"name": "Dive Site - Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const schema = {",
+							"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+							"    \"title\": \"Dive Site\",",
+							"    \"description\": \"Dive Site\",",
+							"    \"type\": \"object\",",
+							"    \"required\": [\"id\", \"country_id\", \"location\", \"latitude\", \"longitude\"],",
+							"    \"properties\": {",
+							"        \"id\": \"integer\",",
+							"        \"country_id\": \"integer\",",
+							"        \"location\": \"string\",",
+							"        \"latitude\": \"number\",",
+							"        \"longitude\": \"number\",",
+							"        \"description\": \"string\"",
+							"    }",
+							"};",
+							"",
+							"const code200       = responseCode.code === 200;",
+							"const statusOk      = responseCode.name.has('OK');",
+							"const responseData  = (code200) ? JSON.parse(responseBody) : null;",
+							"const schemaValid   = tv4.validate(responseData, schema);",
+							"",
+							"tests['Status code is 200']          = code200;",
+							"tests['Status code name has string'] = statusOk;",
+							"tests['Schema valid']                = schemaValid;",
+							"",
+							"if (!schemaValid) {",
+							"    console.log('Validation failed: ', tv4.error);",
+							"}",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/dive_site?id=eq.3",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.pgrst.object+json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"description": ""
+					},
+					{
+						"key": "Prefer",
+						"value": "return=representation",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Member can delete unused dive site"
+			},
+			"response": []
+		},
+		{
+			"name": "Bye",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"console.log('Bye!');"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:3000/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
