@@ -2,7 +2,7 @@
 
 const cp   = require('child_process'),
       path = require('path'),
-      conf = require('./conf');
+      conf = require('../../config/test.env');
 
 /**
  * Start PostgREST server
