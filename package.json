@@ -10,9 +10,9 @@
     "build": "node build/build.js",
     "unit": "karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
-    "preapi": "test/api/pre-test.js",
+    "preapi": "test/api/pre.js",
     "api": "newman run --suppress-exit-code --reporters cli,html test/api/Divelog.postman_collection.json",
-    "postapi": "test/api/post-test.js",
+    "postapi": "test/api/post.js",
     "test": "yarn run unit && yarn run e2e && yarn run api",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
     "docs": "esdoc -c ./esdoc.json"
