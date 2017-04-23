@@ -2,13 +2,13 @@ import ns from 'zogs-js/src/util/object/namespace';
 import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 
 /**
- *
+ * @class {DiverModel}
  */
 export default class DiverModel {
 
   /**
    *
-   * @param  {{firstName: string, lastName: string, dateOfBirth}} obj
+   * @param  {{firstName: string, lastName: string, dateOfBirth: Date}} obj
    * @return {DiverModel}
    */
   static factory(obj) {
@@ -36,26 +36,44 @@ export default class DiverModel {
     });
   }
 
+  /**
+   * @type {String}
+   */
   get firstName() {
     return ns(this).firstName;
   }
 
+  /**
+   * @type {String}
+   */
   set firstName(value) {
     ns(this).firstName = value;
   }
 
+  /**
+   * @type {String}
+   */
   get lastName() {
     return ns(this).lastName;
   }
 
+  /**
+   * @type {String}
+   */
   set lastName(value) {
     ns(this).lastName = value;
   }
 
+  /**
+   * @type {Date}
+   */
   get dateOfBirth() {
     return ns(this).dateOfBirth;
   }
 
+  /**
+   * @type {Date}
+   */
   set dateOfBirth(value) {
     ns(this).dateOfBirth = value;
   }
