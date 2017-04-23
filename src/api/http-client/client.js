@@ -44,7 +44,7 @@ export default class HttpClient {
    * Make a PATCH request
    *
    * @param  {String} uri             Request URI
-   * @param  {Object} data = {}       Request data
+   * @param  {Object} data            Request data
    * @param  {Object} [headers = {}]  Request headers
    */
   doPatch (uri, data, headers = {}) {
@@ -54,8 +54,8 @@ export default class HttpClient {
   /**
    * Make a POST request
    *
-   * @param  {String} uri       Request URI
-   * @param  {Object} data = {} Request data
+   * @param  {String} uri   Request URI
+   * @param  {Object} data  Request data
    * @return {Promise<Object>}
    */
   doPost (uri, data) {
