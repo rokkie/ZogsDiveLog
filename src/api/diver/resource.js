@@ -1,7 +1,10 @@
 import ns from 'zogs-js/src/util/object/namespace';
-import HttpClient from '../http-client/index';
-import RestClient from '../rest-client/index';
+import HttpClient from '../http-client/client';
+import RestClient from '../rest-client/client';
+import Filter from '../rest-client/filter';
+import Selection from '../rest-client/selection';
 import DiverModel from './model';
+import DiverCollection from './collection';
 
 const RESOURCE_NAME = 'diver';
 
@@ -50,7 +53,9 @@ export default class DiverResource {
    * @param  {Filter} [filter = new Filter()]
    * @return {Promise<DiverCollection>}
    */
-  findAll() {
-    return ns(this).restClient.findAll(RESOURCE_NAME);
+  findAll(filter = new Filter()) {
+    return ns(this).restClient
+      .findAll(RESOURCE_NAME, new Selection(), filter)
+      .then(list => new DiverCollection(list.map(DiverModel.factory)));
   }
 }

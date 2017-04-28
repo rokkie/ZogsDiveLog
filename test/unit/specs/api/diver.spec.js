@@ -1,8 +1,9 @@
 /**
  * @test  {DiverResource}
  */
-import DiverResource from 'src/api/diver/resource';
+import DiverCollection from 'src/api/diver/collection';
 import DiverModel from 'src/api/diver/model';
+import DiverResource from 'src/api/diver/resource';
 
 describe('Diver API', function () {
 
@@ -27,6 +28,46 @@ describe('Diver API', function () {
 
     const p = resource.findOne(123).then(actual => {
       expect(actual).to.deep.equal(model);
+    });
+
+    mock.verify();
+
+    return p;
+  });
+
+  /**
+   * @test  {DiverResource#fetchAll}
+   */
+  it('should fetch a list of divers', function () {
+    const rest       = {findAll: () => {}},
+          mock       = sinon.mock(rest),
+          resource   = new DiverResource(rest),
+          data       = [{
+            first_name   : 'Fred',
+            last_name    : 'Spekvet',
+            date_of_birth: new Date()
+          }, {
+            first_name   : 'Arie',
+            last_name    : 'Beuker, de',
+            date_of_birth: new Date()
+          }, {
+            first_name   : 'Ed',
+            last_name    : 'Hooijdock, van',
+            date_of_birth: new Date()
+          }],
+          collection = new DiverCollection([
+            new DiverModel(data[0].first_name, data[0].last_name, data[0].date_of_birth),
+            new DiverModel(data[1].first_name, data[1].last_name, data[1].date_of_birth),
+            new DiverModel(data[2].first_name, data[2].last_name, data[2].date_of_birth)
+          ]);
+
+    mock
+      .expects('findAll')
+      .once()
+      .returns(Promise.resolve(data));
+
+    const p = resource.findAll().then(actual => {
+      expect(actual).to.deep.equal(collection);
     });
 
     mock.verify();
