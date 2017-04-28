@@ -3,9 +3,17 @@ import * as rest from '../rest/index';
 
 const ns = util.object.namespace;
 
+/**
+ * @class Auth
+ */
 export default class Auth {
 
-  // eslint-disable-next-line no-unused-vars
+  /**
+   * Install as Vue plugin
+   *
+   * @param {Vue}               Vue     Vue instance
+   * @param {{apiUrl: string}}  options Key/Value pairs with options
+   */
   static install(Vue, options) {
     Vue.prototype.$auth = new Auth(rest);
   }
@@ -18,6 +26,13 @@ export default class Auth {
     });
   }
 
+  /**
+   * Perform login attempt
+   *
+   * @param  {String}  emailAddress E-mail address as identity
+   * @param  {String}  password     Password as credential
+   * @return {Promise<Boolean>}
+   */
   login (emailAddress, password) {
     return ns(this).rest.login(emailAddress, password)
       .then(success => {

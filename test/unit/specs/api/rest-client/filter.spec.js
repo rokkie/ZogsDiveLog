@@ -52,7 +52,7 @@ describe('Filters', function () {
   });
 
   /**
-   * @test  {Filter#\[Symbol.iterator\]
+   * @test  {Filter#\[Symbol.iterator\]}
    */
   it('should be iterable', function () {
     const predicates = [

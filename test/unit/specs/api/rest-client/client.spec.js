@@ -148,8 +148,8 @@ describe('REST client', function () {
   });
 
   /**
-   * @test  {RestClient@rpc}
-   * @test  {RestClient@findOne}
+   * @test  {RestClient#rpc}
+   * @test  {RestClient#findOne}
    */
   it('should throw on invalid arguments', function () {
     const client = new RestClient();

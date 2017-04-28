@@ -6,7 +6,7 @@ import DiverModel from './model';
 const RESOURCE_NAME = 'diver';
 
 /**
- *
+ * @class {DiverResource}
  */
 export default class DiverResource {
 
@@ -41,13 +41,14 @@ export default class DiverResource {
    */
   findOne(id) {
     return ns(this).restClient
-    .findOne(RESOURCE_NAME, id)
-    .then(obj => DiverModel.factory(obj));
+      .findOne(RESOURCE_NAME, id)
+      .then(obj => DiverModel.factory(obj));
   }
 
   /**
    *
-   * @return {*}
+   * @param  {Filter} [filter = new Filter()]
+   * @return {Promise<DiverCollection>}
    */
   findAll() {
     return ns(this).restClient.findAll(RESOURCE_NAME);
