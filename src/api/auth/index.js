@@ -1,7 +1,9 @@
-import {util} from 'zogs-js';
-import * as rest from '../rest/index';
-
-const ns = util.object.namespace;
+import ns from 'zogs-js/src/util/object/namespace';
+import isDate from 'zogs-js/src/util/is/date';
+import isEmail from 'zogs-js/src/util/is/email';
+import isString from 'zogs-js/src/util/is/string';
+import HttpClient from './../http-client/client';
+import RestClient from './../rest-client/client';
 
 /**
  * @class Auth
@@ -18,11 +20,16 @@ export default class Auth {
     Vue.prototype.$auth = new Auth(rest);
   }
 
-  constructor(rest) {
+  /**
+   * Construct a new Auth
+   *
+   * @param {RestClient}  restClient  Rest client
+   */
+  constructor(restClient) {
     let internal = ns(this);
 
     Object.assign(internal, {
-      rest: rest
+      rest: restClient
     });
   }
 
@@ -34,7 +41,11 @@ export default class Auth {
    * @return {Promise<Boolean>}
    */
   login (emailAddress, password) {
-    return ns(this).rest.login(emailAddress, password)
+    return ns(this).restClient
+      .rpc('login', {
+        email_address: emailAddress,
+        password     : password
+      })
       .then(success => {
         console.log('YEAH', success);
 
