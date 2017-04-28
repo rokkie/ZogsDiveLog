@@ -91,4 +91,12 @@ describe('Diver API', function () {
       expect(diver).to.equal(diverList[idx]);
     });
   });
+
+  /**
+   * @test  {DiverCollection#constructor}
+   */
+  it('should throw on invalid arguments', function () {
+    expect(() => { new DiverCollection('foo'); }).to.throw(TypeError);
+    expect(() => { new DiverCollection(['foo']); }).to.throw(TypeError);
+  });
 });
