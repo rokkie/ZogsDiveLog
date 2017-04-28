@@ -1,5 +1,6 @@
 /**
  * @test  {DiverResource}
+ * @test  {DiverCollection}
  */
 import DiverCollection from 'src/api/diver/collection';
 import DiverModel from 'src/api/diver/model';
@@ -73,5 +74,21 @@ describe('Diver API', function () {
     mock.verify();
 
     return p;
+  });
+
+  /**
+   * @test  {DiverCollection#\[Symbol.iterator\]}
+   */
+  it('should be iterable', function () {
+    const diverList  = [
+            new DiverModel('Fred', 'Spekvet', new Date()),
+            new DiverModel('Arie', 'Beuker, de', new Date()),
+            new DiverModel('Ed', 'Hooijdonck, van', new Date())
+          ],
+          collection = new DiverCollection(diverList);
+
+    Array.from(collection).forEach((diver, idx) => {
+      expect(diver).to.equal(diverList[idx]);
+    });
   });
 });
