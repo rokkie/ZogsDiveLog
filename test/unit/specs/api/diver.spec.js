@@ -53,7 +53,7 @@ describe('Diver API', function () {
             date_of_birth: new Date()
           }, {
             first_name   : 'Ed',
-            last_name    : 'Hooijdock, van',
+            last_name    : 'Hooijdonck, van',
             date_of_birth: new Date()
           }],
           collection = new DiverCollection([
