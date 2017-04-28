@@ -17,6 +17,15 @@ export default class Auth {
    * @param {{apiUrl: string}}  options Key/Value pairs with options
    */
   static install(Vue, options) {
+    if (!options.hasOwnProperty('apiUrl')) {
+      throw new Error("Missing option 'apiUrl'"); // eslint-disable-line quotes
+    } else if (!isString(options.apiUrl)) {
+      throw new TypeError('Expected apiUrl to be string');
+    }
+
+    const http = new HttpClient(),
+          rest = new RestClient(http, options.apiUrl);
+
     Vue.prototype.$auth = new Auth(rest);
   }
 
