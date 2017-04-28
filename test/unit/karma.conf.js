@@ -17,6 +17,9 @@ const path          = require('path'),
 // no need for app entry during tests
 delete webpackConfig.entry;
 
+// add style loaders for components
+webpackConfig.module.rules = utils.styleLoaders().concat(webpackConfig.module.rules);
+
 // make sure istanbul-instrumenter loader is applied before eslint
 webpackConfig.module.rules.unshift({
   enforce: 'pre',
