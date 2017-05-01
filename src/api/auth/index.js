@@ -38,7 +38,7 @@ export default class Auth {
     let internal = ns(this);
 
     Object.assign(internal, {
-      rest: restClient
+      restClient: restClient
     });
   }
 
