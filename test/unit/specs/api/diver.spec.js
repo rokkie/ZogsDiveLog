@@ -6,12 +6,12 @@ import DiverCollection from 'src/api/diver/collection';
 import DiverModel from 'src/api/diver/model';
 import DiverResource from 'src/api/diver/resource';
 
-describe('Diver API', function () {
+describe('Diver API', () => {
 
   /**
    * @test  {DiverResource#fetchOne}
    */
-  it('should fetch a diver', function () {
+  it('should fetch a diver', () => {
     const rest     = {findOne: () => {}},
           mock     = sinon.mock(rest),
           resource = new DiverResource(rest),
@@ -39,7 +39,7 @@ describe('Diver API', function () {
   /**
    * @test  {DiverResource#fetchAll}
    */
-  it('should fetch a list of divers', function () {
+  it('should fetch a list of divers', () => {
     const rest       = {findAll: () => {}},
           mock       = sinon.mock(rest),
           resource   = new DiverResource(rest),
@@ -79,7 +79,7 @@ describe('Diver API', function () {
   /**
    * @test  {DiverCollection#\[Symbol.iterator\]}
    */
-  it('should be iterable', function () {
+  it('should be iterable', () => {
     const diverList  = [
             new DiverModel('Fred', 'Spekvet', new Date()),
             new DiverModel('Arie', 'Beuker, de', new Date()),
@@ -95,7 +95,7 @@ describe('Diver API', function () {
   /**
    * @test  {DiverCollection#constructor}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     expect(() => { new DiverCollection('foo'); }).to.throw(TypeError);
     expect(() => { new DiverCollection(['foo']); }).to.throw(TypeError);
   });

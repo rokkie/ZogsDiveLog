@@ -6,12 +6,12 @@ import * as methods from 'src/api/http-client/method';
 /**
  * @test  {HttpClient}
  */
-describe('HTTP Client', function () {
+describe('HTTP Client', () => {
 
   /**
    * @test  {HttpClient#doGet}
    */
-  it('should perform a GET request', function () {
+  it('should perform a GET request', () => {
     const client = new HttpClient(),
           mname  = 'get-uri',
           uri    = 'uri',
@@ -37,7 +37,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#doPut}
    */
-  it('should perform a PUT request', function () {
+  it('should perform a PUT request', () => {
     const client = new HttpClient(),
           mname  = 'put-uri',
           uri    = 'uri',
@@ -64,7 +64,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#doPatch}
    */
-  it('should perform a PATCH request', function () {
+  it('should perform a PATCH request', () => {
     const client = new HttpClient(),
           mname  = 'patch-uri',
           uri    = 'uri',
@@ -91,7 +91,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#doPost}
    */
-  it('should perform a POST request', function () {
+  it('should perform a POST request', () => {
     const client = new HttpClient(),
           mname  = 'post-uri',
           uri    = 'uri',
@@ -118,7 +118,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#doDelete}
    */
-  it('should perform a DELETE request', function () {
+  it('should perform a DELETE request', () => {
     const client = new HttpClient(),
           mname  = 'delete-uri',
           uri    = 'uri',
@@ -144,7 +144,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#request}
    */
-  it('should throw on invalid response', function () {
+  it('should throw on invalid response', () => {
     const client = new HttpClient(),
           mname  = 'err-uri',
           uri    = 'uri',
@@ -168,7 +168,7 @@ describe('HTTP Client', function () {
   /**
    * @test  {HttpClient#request}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const client = new HttpClient();
 
     expect(() => { client.request([], methods.get); }).to.throw(TypeError);

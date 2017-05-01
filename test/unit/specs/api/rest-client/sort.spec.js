@@ -4,12 +4,12 @@ import {asc, desc} from 'src/api/rest-client/order';
 /**
  * @test  {Sort}
  */
-describe('Sorting', function () {
+describe('Sorting', () => {
 
   /**
    * @test  {Sort#constuctor}
    */
-  it('should set sorting passed as object to the constructor', function () {
+  it('should set sorting passed as object to the constructor', () => {
     const sort = new Sort({
       foo: asc,
       bar: desc
@@ -22,7 +22,7 @@ describe('Sorting', function () {
   /**
    * @test  {Sort#constuctor}
    */
-  it('should set sorting passed as tuples to the constructor', function () {
+  it('should set sorting passed as tuples to the constructor', () => {
     const sort = new Sort([
       ['foo', asc],
       ['bar', desc]
@@ -35,7 +35,7 @@ describe('Sorting', function () {
   /**
    * @test  {Sort#set}
    */
-  it('should add column', function () {
+  it('should add column', () => {
     const sort   = new Sort(),
           column = 'foo';
 
@@ -47,7 +47,7 @@ describe('Sorting', function () {
   /**
    * @test  {Sort#get}
    */
-  it('should return undefined when a column was not set', function () {
+  it('should return undefined when a column was not set', () => {
     const sort = new Sort();
 
     expect(sort.get('foo')).to.equal(undefined);
@@ -56,7 +56,7 @@ describe('Sorting', function () {
   /**
    * @test  {Sort#\[Symbol.iterator\]}
    */
-  it('should be iterable', function () {
+  it('should be iterable', () => {
     const sort = new Sort(),
           keys = ['foo', 'bar', 'baz'],
           vals = [asc, desc, asc];
@@ -74,7 +74,7 @@ describe('Sorting', function () {
   /**
    * @test  {Sort#strval}
    */
-  it('should produce correct string values', function () {
+  it('should produce correct string values', () => {
     const sort = new Sort();
 
     sort.set('foo', asc);
@@ -88,7 +88,7 @@ describe('Sorting', function () {
    * @test  {Sort#set}
    * @test  {Sort#get}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const sort = new Sort();
 
     expect(() => { new Sort('foo'); }).to.throw(TypeError);

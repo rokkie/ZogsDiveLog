@@ -12,12 +12,12 @@ const API_URL = 'api-url';
 /**
  * @test  {RestClient}
  */
-describe('REST client', function () {
+describe('REST client', () => {
 
   /**
    * @test  {RestClient#rpc}
    */
-  it('should perform a remote procedure call', function () {
+  it('should perform a remote procedure call', () => {
     const http     = {doPost: () => {}},
           mock     = sinon.mock(http),
           client   = new RestClient(http, API_URL),
@@ -40,7 +40,7 @@ describe('REST client', function () {
   /**
    * @test  {RestClient#findOne}
    */
-  it('should find one resource', function () {
+  it('should find one resource', () => {
     const http     = {doGet: () => {}},
           mock     = sinon.mock(http),
           client   = new RestClient(http, API_URL),
@@ -64,7 +64,7 @@ describe('REST client', function () {
   /**
    * @test  {RestClient#findAll}
    */
-  it('should find a list of resources', function () {
+  it('should find a list of resources', () => {
     const http      = {doGet: () => {}},
           mock      = sinon.mock(http),
           client    = new RestClient(http, API_URL),
@@ -107,7 +107,7 @@ describe('REST client', function () {
   /**
    * @test  {RestClient#findAll}
    */
-  it('should default to selecting all', function () {
+  it('should default to selecting all', () => {
     const http      = {doGet: () => {}},
           mock      = sinon.mock(http),
           client    = new RestClient(http, API_URL),
@@ -128,7 +128,7 @@ describe('REST client', function () {
   /**
    * @test  {RestClient#findAll}
    */
-  it('should omit limit when only offset is specified', function () {
+  it('should omit limit when only offset is specified', () => {
     const http      = {doGet: () => {}},
           mock      = sinon.mock(http),
           client    = new RestClient(http, API_URL),
@@ -151,7 +151,7 @@ describe('REST client', function () {
    * @test  {RestClient#rpc}
    * @test  {RestClient#findOne}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const client = new RestClient();
 
     expect(() => { client.rpc([]); }).to.throw(TypeError);

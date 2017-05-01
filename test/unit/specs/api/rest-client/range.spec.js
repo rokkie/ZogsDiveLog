@@ -3,13 +3,13 @@ import Range from 'src/api/rest-client/range';
 /**
  * @test {Range}
  */
-describe('Ranges', function () {
+describe('Ranges', () => {
 
   /**
    * @test  {Range#offset}
    * @test  {Range#limit}
    */
-  it('should get and set properties', function () {
+  it('should get and set properties', () => {
     const range = new Range();
 
     range.offset = 10;
@@ -22,7 +22,7 @@ describe('Ranges', function () {
   /**
    * @test {Range#isAll}
    */
-  it('should recognise if to range selects all', function () {
+  it('should recognise if to range selects all', () => {
     const range = new Range(10, 100);
 
     expect(range.isAll).to.equal(false);
@@ -38,7 +38,7 @@ describe('Ranges', function () {
    * @test  {Range#offset}
    * @test  {Range#limit}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const range = new Range();
 
     expect(() => { new Range('0'); }).to.throw(TypeError);

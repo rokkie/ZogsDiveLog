@@ -4,14 +4,14 @@ import {gt, eq} from 'src/api/rest-client/operator';
 /**
  * @test  {Predicate}
  */
-describe('Filter predicate', function () {
+describe('Filter predicate', () => {
 
   /**
    * @test  {Predicate#column}
    * @test  {Predicate#operator}
    * @test  {Predicate#value}
    */
-  it('should get and set properties', function () {
+  it('should get and set properties', () => {
     const predicate = new Predicate('foo', gt, 'bar');
 
     predicate.column   = 'baz';
@@ -27,7 +27,7 @@ describe('Filter predicate', function () {
    * @test  {Predicate#negate}
    * @test  {Predicate#isNegated}
    */
-  it('should negate an existing operator', function () {
+  it('should negate an existing operator', () => {
     const predicate = new Predicate('foo', eq, 'bar', true);
 
     expect(predicate.isNegated).to.equal(true);
@@ -47,7 +47,7 @@ describe('Filter predicate', function () {
   /**
    * @test  {Predicate#strval}
    */
-  it('should convert to string', function () {
+  it('should convert to string', () => {
     const predicate = new Predicate('foo', eq, 'bar'),
           date      = new Date();
 
@@ -68,7 +68,7 @@ describe('Filter predicate', function () {
   /**
    * @test  {Predicate#constructor}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const predicate = new Predicate('foo', eq, 'bar');
 
     expect(() => { new Predicate([], eq, 'bar'); }).to.throw(TypeError);

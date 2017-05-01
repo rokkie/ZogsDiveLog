@@ -3,13 +3,13 @@ import Selection from 'src/api/rest-client/selection';
 /**
  * @test {Selection}
  */
-describe('Selections', function () {
+describe('Selections', () => {
 
   /**
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should add a single field', function () {
+  it('should add a single field', () => {
     const selection = new Selection();
 
     selection.addField('foo');
@@ -21,7 +21,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should add a field with an alias', function () {
+  it('should add a field with an alias', () => {
     const selection = new Selection();
 
     selection.addField('foo', 'fooAlias');
@@ -33,7 +33,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should add multiple fields', function () {
+  it('should add multiple fields', () => {
     const selection = new Selection();
 
     selection.addFields(['foo', 'bar']);
@@ -45,7 +45,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should add a list of tuples as fields with aliases', function () {
+  it('should add a list of tuples as fields with aliases', () => {
     const selection = new Selection();
 
     selection.addFields([
@@ -61,7 +61,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should add an object hash as fields with aliases', function () {
+  it('should add an object hash as fields with aliases', () => {
     const selection = new Selection();
 
     selection.addFields({
@@ -77,7 +77,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should recurse into nested tuples', function () {
+  it('should recurse into nested tuples', () => {
     const selection = new Selection();
 
     selection.addFields([
@@ -96,7 +96,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should recurse into nested object hashes', function () {
+  it('should recurse into nested object hashes', () => {
     const selection = new Selection();
 
     selection.addFields({
@@ -115,7 +115,7 @@ describe('Selections', function () {
    * @test  {Selection#addField}
    * @test  {Selection#strval}
    */
-  it('should mix a lists with tuples and object hashes', function () {
+  it('should mix a lists with tuples and object hashes', () => {
     const selection = new Selection();
 
     selection.addFields([
@@ -135,7 +135,7 @@ describe('Selections', function () {
   /**
    * @test  {Selection#removeField}
    */
-  it('should remove a field', function () {
+  it('should remove a field', () => {
     const selection = new Selection(['foo', 'bar', 'baz']);
 
     selection.removeField('bar');
@@ -146,7 +146,7 @@ describe('Selections', function () {
   /**
    * @test  {Selection#removeField}
    */
-  it('should ignore removing non-existent fields', function () {
+  it('should ignore removing non-existent fields', () => {
     const selection = new Selection(['foo', 'bar', 'baz']);
 
     selection.removeField('qux');
@@ -157,7 +157,7 @@ describe('Selections', function () {
   /**
    * @test  {Selection#\[Symbol.iterator\]}
    */
-  it('should be iterable', function () {
+  it('should be iterable', () => {
     const fields    = ['foo', 'bar', 'baz'],
           selection = new Selection(fields);
 
@@ -172,7 +172,7 @@ describe('Selections', function () {
    * @test {Selection#addField}
    * @test {Selection#removeField}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const selection = new Selection();
 
     expect(() => { selection.addFields('foo'); }).to.throw(TypeError);

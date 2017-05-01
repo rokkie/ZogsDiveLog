@@ -5,12 +5,12 @@ import {eq} from 'src/api/rest-client/operator';
 /**
  * @test  {Filter}
  */
-describe('Filters', function () {
+describe('Filters', () => {
 
   /**
    * @test  {Filter#addPredicate}
    */
-  it('should add a predicate', function () {
+  it('should add a predicate', () => {
     const filter = new Filter();
 
     filter.addPredicate(new Predicate('foo', eq, 'bar'));
@@ -23,7 +23,7 @@ describe('Filters', function () {
   /**
    * @test  {Filter#removePredicate}
    */
-  it('should remove a predicate', function () {
+  it('should remove a predicate', () => {
     const predicates = [
             new Predicate('foo', eq, 'bar'),
             new Predicate('baz', eq, 'qux'),
@@ -40,7 +40,7 @@ describe('Filters', function () {
   /**
    * @test  {Filter#removePredicate}
    */
-  it('should ignore removing non-existent predicates', function () {
+  it('should ignore removing non-existent predicates', () => {
     const filter    = new Filter([new Predicate('foo', eq, 'bar')]),
           predicate = new Predicate('baz', eq, 'qux');
 
@@ -54,7 +54,7 @@ describe('Filters', function () {
   /**
    * @test  {Filter#\[Symbol.iterator\]}
    */
-  it('should be iterable', function () {
+  it('should be iterable', () => {
     const predicates = [
             new Predicate('foo', eq, 'bar'),
             new Predicate('baz', eq, 'qux'),
@@ -70,7 +70,7 @@ describe('Filters', function () {
    * @test  {Filter#constructor}
    * @test  {Filter#addPredicate}
    */
-  it('should throw on invalid arguments', function () {
+  it('should throw on invalid arguments', () => {
     const filter = new Filter();
 
     expect(() => { new Filter('foo'); }).to.throw(TypeError);
