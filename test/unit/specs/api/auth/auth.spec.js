@@ -17,7 +17,7 @@ describe('Authentication', () => {
       apiUrl: 'foo'
     });
 
-    expect(vue.prototype.$auth).to.be.instanceof(Auth);
+    expect(vue.prototype.$auth).to.be.instanceOf(Auth);
   });
 
   /**

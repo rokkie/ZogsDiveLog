@@ -7,6 +7,15 @@ import DiverResource from 'src/api/diver/resource';
  * @test  {DiverCollection}
  */
 describe('Diver API', () => {
+  
+  /**
+   * @test  {DiverResource#factory}
+   */
+  it('should create a DiverResource', () => {
+    const resource = DiverResource.factory('foo');
+
+    expect(resource).to.be.instanceOf(DiverResource);
+  });
 
   /**
    * @test  {DiverResource#fetchOne}
@@ -96,6 +105,7 @@ describe('Diver API', () => {
    * @test  {DiverCollection#constructor}
    */
   it('should throw on invalid arguments', () => {
+    expect(() => { DiverResource.factory(0); }).to.throw(TypeError);
     expect(() => { new DiverCollection('foo'); }).to.throw(TypeError);
     expect(() => { new DiverCollection(['foo']); }).to.throw(TypeError);
   });
