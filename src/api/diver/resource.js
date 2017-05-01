@@ -1,4 +1,5 @@
 import ns from 'zogs-js/src/util/object/namespace';
+import isString from 'zogs-js/src/util/is/string';
 import HttpClient from '../http-client/client';
 import RestClient from '../rest-client/client';
 import Filter from '../rest-client/filter';
@@ -19,6 +20,10 @@ export default class DiverResource {
    * @return {DiverResource}
    */
   static factory(apiUrl) {
+    if (!isString(apiUrl)) {
+      throw new TypeError('Expected apiUrl to be string');
+    }
+
     const httpClient = new HttpClient(),
           restClient = new RestClient(httpClient, apiUrl);
 

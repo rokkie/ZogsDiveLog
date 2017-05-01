@@ -102,6 +102,42 @@ describe('Diver API', () => {
   });
 
   /**
+   * @test  {DiverModel#firstName}
+   * @test  {DiverModel#lastName}
+   * @test  {DiverModel#dateOfBirth}
+   */
+  it('should get properties passed via constructor', () => {
+    const firstName   = 'Fred',
+          lastName    = 'Spekvet',
+          dateOfBirth = new Date(),
+          model       = new DiverModel(firstName, lastName, dateOfBirth);
+
+    expect(model.firstName).to.equal(firstName);
+    expect(model.lastName).to.equal(lastName);
+    expect(model.dateOfBirth).to.equal(dateOfBirth);
+  });
+
+  /**
+   * @test  {DiverModel#firstName}
+   * @test  {DiverModel#lastName}
+   * @test  {DiverModel#dateOfBirth}
+   */
+  it('should set properties', () => {
+    const firstName   = 'Fred',
+          lastName    = 'Spekvet',
+          dateOfBirth = new Date(),
+          model       = new DiverModel();
+
+    model.firstName   = firstName;
+    model.lastName    = lastName;
+    model.dateOfBirth = dateOfBirth;
+
+    expect(model.firstName).to.equal(firstName);
+    expect(model.lastName).to.equal(lastName);
+    expect(model.dateOfBirth).to.equal(dateOfBirth);
+  });
+
+  /**
    * @test  {DiverCollection#constructor}
    */
   it('should throw on invalid arguments', () => {
