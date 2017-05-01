@@ -6,7 +6,7 @@ import Auth from 'src/api/auth/index';
 describe('Authentication', () => {
 
   /**
-   * @test  {Auth#install}
+   * @test  {Auth.install}
    */
   it('should install as Vue plugin', () => {
     const vue = {};

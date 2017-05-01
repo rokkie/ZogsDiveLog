@@ -9,7 +9,7 @@ import DiverResource from 'src/api/diver/resource';
 describe('Diver API', () => {
   
   /**
-   * @test  {DiverResource#factory}
+   * @test  {DiverResource.factory}
    */
   it('should create a DiverResource', () => {
     const resource = DiverResource.factory('foo');
