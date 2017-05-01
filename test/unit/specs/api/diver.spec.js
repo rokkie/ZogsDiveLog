@@ -126,7 +126,7 @@ describe('Diver API', () => {
     const firstName   = 'Fred',
           lastName    = 'Spekvet',
           dateOfBirth = new Date(),
-          model       = new DiverModel();
+          model       = new DiverModel('foo', 'bar', 0);
 
     model.firstName   = firstName;
     model.lastName    = lastName;
