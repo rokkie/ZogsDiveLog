@@ -1,11 +1,11 @@
-/**
- * @test  {DiverResource}
- * @test  {DiverCollection}
- */
 import DiverCollection from 'src/api/diver/collection';
 import DiverModel from 'src/api/diver/model';
 import DiverResource from 'src/api/diver/resource';
 
+/**
+ * @test  {DiverResource}
+ * @test  {DiverCollection}
+ */
 describe('Diver API', () => {
 
   /**
