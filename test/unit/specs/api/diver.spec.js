@@ -27,7 +27,7 @@ describe('Diver API', () => {
           data     = {
             first_name   : 'Fred',
             last_name    : 'Spekvet',
-            date_of_birth: new Date()
+            date_of_birth: '2001-01-01'
           },
           model    = new DiverModel(data.first_name, data.last_name, data.date_of_birth);
 
@@ -55,15 +55,15 @@ describe('Diver API', () => {
           data       = [{
             first_name   : 'Fred',
             last_name    : 'Spekvet',
-            date_of_birth: new Date()
+            date_of_birth: '2001-01-01'
           }, {
             first_name   : 'Arie',
             last_name    : 'Beuker, de',
-            date_of_birth: new Date()
+            date_of_birth: '2002-02-02'
           }, {
             first_name   : 'Ed',
             last_name    : 'Hooijdonck, van',
-            date_of_birth: new Date()
+            date_of_birth: '2003-03-03'
           }],
           collection = new DiverCollection([
             new DiverModel(data[0].first_name, data[0].last_name, data[0].date_of_birth),
