@@ -3,7 +3,7 @@ import {Button, Form, FormItem, Input} from 'element-ui';
 import LoginForm from 'src/components/LoginForm';
 
 describe('LoginForm.vue', () => {
-  let vm;
+  let vm, $auth;
   
   before(() => {
     Vue.use(Button);
@@ -16,9 +16,14 @@ describe('LoginForm.vue', () => {
       render: h => h(LoginForm)
     });
   });
-  
+
+  beforeEach(() => {
+    $auth = Vue.prototype.$auth;
+  });
+
   afterEach(() => {
     vm.$children[0].$refs.loginForm.resetFields();
+    Vue.prototype.$auth = $auth;
   });
   
   it('should render correct contents', () => {
@@ -47,5 +52,55 @@ describe('LoginForm.vue', () => {
       expect(msg.toLowerCase()).to.have.string('password');
       done();
     });
+  });
+
+  it('should submit the credentials', () => {
+    const component    = vm.$children[0],
+          btnSubmit    = vm.$el.querySelector('button.el-button--primary'),
+          emailAddress = 'user@example.com',
+          password     = 'foobarbazqux',
+          auth         = {login: () => {}},
+          mock         = sinon.mock(auth),
+          evt          = new Event('click', { bubbles: true });
+
+    Vue.prototype.$auth = auth;
+
+    mock
+      .expects('login')
+      .withArgs(emailAddress, password);
+
+    Object.assign(component.loginModel, {
+      emailAddress,
+      password
+    });
+
+    btnSubmit.dispatchEvent(evt);
+
+    mock.verify();
+  });
+
+  it('should not submit with invalid form values', () => {
+    const component    = vm.$children[0],
+          btnSubmit    = vm.$el.querySelector('button.el-button--primary'),
+          emailAddress = 'notemail',
+          password     = 'foo',
+          auth         = {login: () => {}},
+          mock         = sinon.mock(auth),
+          evt          = new Event('click', { bubbles: true });
+
+    Vue.prototype.$auth = auth;
+
+    mock
+      .expects('login')
+      .never();
+
+    Object.assign(component.loginModel, {
+      emailAddress,
+      password
+    });
+
+    btnSubmit.dispatchEvent(evt);
+
+    mock.verify();
   });
 });

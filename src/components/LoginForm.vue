@@ -43,9 +43,9 @@ export default {
   methods: {
     onLoginBtnClick () {
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          // Yey!
-        }
+        if (!valid) { return; }
+
+        this.$auth.login(this.loginModel.emailAddress, this.loginModel.password);
       });
     }
   }
