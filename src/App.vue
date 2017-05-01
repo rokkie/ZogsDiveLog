@@ -5,12 +5,10 @@
 </template>
 
 <script>
-import Auth from './components/Auth';
 
 export default {
   name: 'app',
   components: {
-    Auth
   }
 };
 </script>
