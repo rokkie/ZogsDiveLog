@@ -1,5 +1,5 @@
 import ns from 'zogs-js/src/util/object/namespace';
-import {string as isString, date as isDate} from 'zogs-js/src/util/is';
+import {date as isDate, integer as isInt, string as isString} from 'zogs-js/src/util/is';
 import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 
 /**
@@ -29,6 +29,10 @@ export default class DiverModel {
    */
   constructor(firstName, lastName, dateOfBirth) {
     const internal = ns(this);
+
+    if (isString(dateOfBirth) || isInt(dateOfBirth)) {
+      dateOfBirth = new Date(dateOfBirth);
+    }
 
     if (!isString(firstName)) {
       throw new TypeError('Expected first name to be string');

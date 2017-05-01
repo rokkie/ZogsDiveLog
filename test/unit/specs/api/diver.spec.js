@@ -141,7 +141,14 @@ describe('Diver API', () => {
    * @test  {DiverCollection#constructor}
    */
   it('should throw on invalid arguments', () => {
+    const firstName   = 'Fred',
+          lastName    = 'Spekvet',
+          dateOfBirth = new Date();
+
     expect(() => { DiverResource.factory(0); }).to.throw(TypeError);
+    expect(() => { new DiverModel(0, lastName, dateOfBirth); }).to.throw(TypeError);
+    expect(() => { new DiverModel(firstName, 0, dateOfBirth); }).to.throw(TypeError);
+    expect(() => { new DiverModel(firstName, lastName, 'notdate'); }).to.throw(TypeError);
     expect(() => { new DiverCollection('foo'); }).to.throw(TypeError);
     expect(() => { new DiverCollection(['foo']); }).to.throw(TypeError);
   });
