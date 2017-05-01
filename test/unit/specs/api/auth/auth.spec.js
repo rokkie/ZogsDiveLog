@@ -6,6 +6,21 @@ import Auth from 'src/api/auth/index';
 describe('Authentication', () => {
 
   /**
+   * @test  {Auth#install}
+   */
+  it('should install as Vue plugin', () => {
+    const vue = {};
+
+    vue.prototype = {};
+
+    Auth.install(vue, {
+      apiUrl: 'foo'
+    });
+
+    expect(vue.prototype.$auth).to.be.instanceof(Auth);
+  });
+
+  /**
    * @test  {Auth#login}
    */
   it('should call the login RPC method', () => {
@@ -75,6 +90,8 @@ describe('Authentication', () => {
 
     futureDate.setDate(dateOfBirth.getDate() + 1);
 
+    expect(() => { Auth.install({}, {}); }).to.throw(Error);
+    expect(() => { Auth.install({}, {apiUrl: 0}); }).to.throw(TypeError);
     expect(() => { auth.signup(0, password, firstName, lastName, dateOfBirth); }).to.throw(TypeError);
     expect(() => { auth.signup('notemail', password, firstName, lastName, dateOfBirth); }).to.throw(RangeError);
     expect(() => { auth.signup(emailAddress, 0, firstName, lastName, dateOfBirth); }).to.throw(TypeError);
