@@ -18,7 +18,7 @@ describe('Diver API', () => {
   });
 
   /**
-   * @test  {DiverResource#fetchOne}
+   * @test  {DiverResource#findOne}
    */
   it('should fetch a diver', () => {
     const rest     = {findOne: () => {}},
@@ -46,7 +46,7 @@ describe('Diver API', () => {
   });
 
   /**
-   * @test  {DiverResource#fetchAll}
+   * @test  {DiverResource#findAll}
    */
   it('should fetch a list of divers', () => {
     const rest       = {findAll: () => {}},
