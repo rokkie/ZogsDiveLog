@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import isDate from 'zogs-js/src/util/is/date';
 import isEmail from 'zogs-js/src/util/is/email';
 import isString from 'zogs-js/src/util/is/string';

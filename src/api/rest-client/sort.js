@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import {camelCaseToUnderscore} from 'zogs-js/src/util/string';
 import {asc, desc} from './order';
 import {

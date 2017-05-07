@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import {date as isDate, integer as isInt, string as isString} from 'zogs-js/src/util/is';
 import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 

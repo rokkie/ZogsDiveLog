@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import isArray from 'zogs-js/src/util/is/array';
 import Predicate from './predicate';
 

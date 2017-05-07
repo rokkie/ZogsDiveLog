@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import isString from 'zogs-js/src/util/is/string';
 import HttpClient from '../http-client/client';
 import RestClient from '../rest-client/client';

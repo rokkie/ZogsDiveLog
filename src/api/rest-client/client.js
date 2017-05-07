@@ -1,4 +1,4 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import ns from 'src/util/namespace';
 import Filter from './filter';
 import Selection from './selection';
 import Sort from './sort';
