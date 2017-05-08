@@ -1,13 +1,11 @@
 import isString from 'lodash.isstring';
+import isInteger from 'lodash.isinteger';
 import ns from 'src/util/namespace';
 import Filter from './filter';
 import Selection from './selection';
 import Sort from './sort';
 import Range from './range';
-import {
-  object as isObject,
-  integer as isInteger
-} from 'zogs-js/src/util/is';
+import {object as isObject} from 'zogs-js/src/util/is';
 
 /**
  * REST Client

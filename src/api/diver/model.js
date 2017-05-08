@@ -1,7 +1,7 @@
-import isString from 'lodash.isstring';
 import isDate from 'lodash.isdate';
+import isInteger from 'lodash.isinteger';
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
-import {integer as isInt} from 'zogs-js/src/util/is';
 import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 
 /**
@@ -32,7 +32,7 @@ export default class DiverModel {
   constructor(firstName, lastName, dateOfBirth) {
     const internal = ns(this);
 
-    if (isString(dateOfBirth) || isInt(dateOfBirth)) {
+    if (isString(dateOfBirth) || isInteger(dateOfBirth)) {
       dateOfBirth = new Date(dateOfBirth);
     }
 
