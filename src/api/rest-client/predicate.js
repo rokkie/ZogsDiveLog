@@ -1,10 +1,10 @@
 import isString from 'lodash.isstring';
+import isDate from 'lodash.isdate';
 import ns from 'src/util/namespace';
 import {
   numeric as isNumber,
   boolean as isBoolean,
-  array as isArray,
-  date as isDate
+  array as isArray
 } from 'zogs-js/src/util/is';
 import {
   camelCaseToUnderscore,

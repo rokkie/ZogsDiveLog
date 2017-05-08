@@ -1,6 +1,7 @@
 import isString from 'lodash.isstring';
+import isDate from 'lodash.isdate';
 import ns from 'src/util/namespace';
-import {date as isDate, integer as isInt} from 'zogs-js/src/util/is';
+import {integer as isInt} from 'zogs-js/src/util/is';
 import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 
 /**
