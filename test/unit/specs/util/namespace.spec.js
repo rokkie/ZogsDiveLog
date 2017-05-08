@@ -28,7 +28,7 @@ describe('Namespace util', () => {
     foo1.myProp = 'bar';
     foo2.myProp = 'baz';
 
-    expect(foo1.myProp).to.be('prefix-bar');
-    expect(foo2.myProp).to.be('prefix-baz');
+    expect(foo1.myProp).to.equal('prefix-bar');
+    expect(foo2.myProp).to.equal('prefix-baz');
   });
 });
