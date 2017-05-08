@@ -11,16 +11,16 @@ export default class Selection {
   /**
    * Construct a selection
    *
-   * @param {Array|Object} [fields = undefined] Field names to include in the selection
+   * @param {Array|Object} [fields] Field names to include in the selection
    */
-  constructor(fields = undefined) {
+  constructor(fields) {
     const internal = ns(this);
 
     Object.assign(internal, {
       fields: new Map()
     });
 
-    if (undefined !== fields) {
+    if (fields) {
       this.addFields(fields);
     }
   }
@@ -75,10 +75,10 @@ export default class Selection {
   /**
    * Add a field to the selection
    *
-   * @param {String|Array|Object}  field                Name of the field
-   * @param {String}               [alias = undefined]  Field alias
+   * @param {String|Array|Object}  field    Name of the field
+   * @param {String}               [alias]  Field alias, defaults to field name
    */
-  addField(field, alias = undefined) {
+  addField(field, alias) {
     const internal  = ns(this);
 
     if (!isString(field) && !isArray(field) && !isPlainObject(field)) {
