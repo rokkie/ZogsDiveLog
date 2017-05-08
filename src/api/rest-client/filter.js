@@ -19,7 +19,7 @@ export default class Filter {
       throw new TypeError('Supplied argument is not an array');
     }
 
-    if (predicates.some(diver => !(diver instanceof Predicate))) {
+    if (predicates.some(predicate => !(predicate instanceof Predicate))) {
       throw new TypeError('Supplied argument contains non Predicate');
     }
 
