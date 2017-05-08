@@ -66,9 +66,7 @@ export default class Selection {
         this.addField(...args);
       });
     } else if (isPlainObject(fields)) {
-      Object.keys(fields).forEach(key => {
-        this.addField(fields[key], key);
-      });
+      Object.keys(fields).forEach(key => this.addField(fields[key], key));
     } else {
       throw new TypeError('Field definitions should be array or object literal');
     }
