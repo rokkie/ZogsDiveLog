@@ -6643,7 +6643,3 @@ yauzl@2.4.1:
 yeast@0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
-
-"zogs-js@gitlab:rokkie/zogs-js#devel":
-  version "0.0.1"
-  resolved "https://gitlab.com/rokkie/zogs-js/repository/archive.tar.gz?ref=87c419197cf25a17ec70da798b62f1a827b0a7ff"

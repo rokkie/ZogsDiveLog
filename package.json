@@ -40,8 +40,7 @@
     "lodash.isplainobject": "^4.0.6",
     "lodash.isstring": "^4.0.1",
     "lodash.snakecase": "^4.1.1",
-    "vue": "^2.3.0",
-    "zogs-js": "gitlab:rokkie/zogs-js#devel"
+    "vue": "^2.3.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
