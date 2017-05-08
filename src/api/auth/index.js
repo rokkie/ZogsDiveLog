@@ -1,7 +1,7 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import isDate from 'zogs-js/src/util/is/date';
 import isEmail from 'zogs-js/src/util/is/email';
-import isString from 'zogs-js/src/util/is/string';
 import HttpClient from './../http-client/client';
 import RestClient from './../rest-client/client';
 

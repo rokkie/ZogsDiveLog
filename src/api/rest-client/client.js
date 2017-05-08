@@ -1,10 +1,10 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import Filter from './filter';
 import Selection from './selection';
 import Sort from './sort';
 import Range from './range';
 import {
-  string as isString,
   object as isObject,
   integer as isInteger
 } from 'zogs-js/src/util/is';

@@ -1,10 +1,10 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import {camelCaseToUnderscore} from 'zogs-js/src/util/string';
 import {asc, desc} from './order';
 import {
   array as isArray,
-  object as isObject,
-  string as isString
+  object as isObject
 } from 'zogs-js/src/util/is';
 
 /**

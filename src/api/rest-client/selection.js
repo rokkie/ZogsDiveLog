@@ -1,8 +1,8 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import {
   array as isArray,
-  object as isObject,
-  string as isString
+  object as isObject
 } from 'zogs-js/src/util/is';
 
 /**

@@ -1,6 +1,6 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import {
-  string as isString,
   numeric as isNumber,
   boolean as isBoolean,
   array as isArray,
