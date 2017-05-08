@@ -1,6 +1,7 @@
 import isArray from 'lodash.isarray';
 import isBoolean from 'lodash.isboolean';
 import isDate from 'lodash.isdate';
+import isFinite from 'lodash.isfinite';
 import isNumber from 'lodash.isnumber';
 import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
@@ -39,7 +40,7 @@ export default class Predicate {
       throw new TypeError('Operator should be string');
     }
 
-    if (!isString(value) && !isNumber(value) && !isBoolean(value) && !isArray(value) && !isDate(value)) {
+    if (!(isString(value) || isNumber(value) || isFinite(value) || isBoolean(value) || isArray(value) || isDate(value))) {
       throw new TypeError('Value should be string, number, boolean, array or date');
     }
 
@@ -102,7 +103,7 @@ export default class Predicate {
    * @type  {String|Number|Boolean|Array|Date}
    */
   set value(value) {
-    if (!isString(value) && !isNumber(value) && !isBoolean(value) && !isArray(value) && !isDate(value)) {
+    if (!(isString(value) || isNumber(value) || isFinite(value) || isBoolean(value) || isArray(value) || isDate(value))) {
       throw new TypeError('Value should be string, number, boolean, array or date');
     }
 
