@@ -42,7 +42,7 @@ export default class DiverModel {
     if (!isString(lastName)) {
       throw new TypeError('Expected last name to be string');
     }
-    if (!isDate(dateOfBirth)) {
+    if (!isDate(dateOfBirth) || isNaN(dateOfBirth)) {
       throw new TypeError('Expected date of birth to be string');
     }
 
