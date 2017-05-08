@@ -1,5 +1,5 @@
-import ns from 'zogs-js/src/util/object/namespace';
-import isArray from 'zogs-js/src/util/is/array';
+import isArray from 'lodash.isarray';
+import ns from 'src/util/namespace';
 import Predicate from './predicate';
 
 /**

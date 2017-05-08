@@ -1,11 +1,9 @@
-import ns from 'zogs-js/src/util/object/namespace';
+import isArray from 'lodash.isarray';
+import isPlainObject from 'lodash.isplainobject';
+import isString from 'lodash.isstring';
+import ns from 'src/util/namespace';
 import {camelCaseToUnderscore} from 'zogs-js/src/util/string';
 import {asc, desc} from './order';
-import {
-  array as isArray,
-  object as isObject,
-  string as isString
-} from 'zogs-js/src/util/is';
 
 /**
  * Column sorter
@@ -24,7 +22,7 @@ export default class Sort {
       map: new Map()
     });
 
-    if (isObject(sorting, true)) {
+    if (isPlainObject(sorting)) {
       Object.keys(sorting).forEach(key => { this.set(key, sorting[key]); });
     } else if (isArray(sorting)) {
       sorting.forEach(([column, direction]) => { this.set(column, direction); });

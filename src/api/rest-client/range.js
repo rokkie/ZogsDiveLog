@@ -1,5 +1,5 @@
-import ns from 'zogs-js/src/util/object/namespace';
-import {integer as isInt} from 'zogs-js/src/util/is';
+import isInteger from 'lodash.isinteger';
+import ns from 'src/util/namespace';
 
 /**
  * Result set range
@@ -15,7 +15,7 @@ export default class Range {
   constructor(offset = 0, limit = Infinity) {
     const internal = ns(this);
 
-    if (!isInt(offset)) {
+    if (!isInteger(offset)) {
       throw new TypeError('Offset should be an integer');
     }
 
@@ -23,7 +23,7 @@ export default class Range {
       throw new RangeError('Offset should be a positive integer');
     }
 
-    if (!isInt(limit) && Infinity !== limit) {
+    if (!isInteger(limit) && Infinity !== limit) {
       throw new TypeError('Offset should be an integer or Infinity');
     }
 
@@ -48,7 +48,7 @@ export default class Range {
    * @type {Number}
    */
   set offset(value) {
-    if (!isInt(value)) {
+    if (!isInteger(value)) {
       throw new TypeError('Offset should be an integer');
     }
 
@@ -70,7 +70,7 @@ export default class Range {
    * @type {Number}
    */
   set limit(value) {
-    if (!isInt(value) && Infinity !== value) {
+    if (!isInteger(value) && Infinity !== value) {
       throw new TypeError('Offset should be an integer or Infinity');
     }
 

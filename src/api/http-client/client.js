@@ -1,10 +1,8 @@
+import isPlainObject from 'lodash.isplainobject';
+import isString from 'lodash.isstring';
 import toQueryString from 'zogs-js/src/util/url/to-query-string';
 import * as errors from './error';
 import * as methods from './method';
-import {
-  string as isString,
-  object as isObject
-} from 'zogs-js/src/util/is';
 
 /**
  * HTTP Client
@@ -98,7 +96,7 @@ export default class HttpClient {
       throw new TypeError('Expected body to be string');
     }
 
-    if (!isObject(headers, true)) {
+    if (!isPlainObject(headers)) {
       throw new TypeError('Expected headers to be object literal');
     }
 

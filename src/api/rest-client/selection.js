@@ -1,9 +1,7 @@
-import ns from 'zogs-js/src/util/object/namespace';
-import {
-  array as isArray,
-  object as isObject,
-  string as isString
-} from 'zogs-js/src/util/is';
+import isArray from 'lodash.isarray';
+import isPlainObject from 'lodash.isplainobject';
+import isString from 'lodash.isstring';
+import ns from 'src/util/namespace';
 
 /**
  * Field selection
@@ -67,7 +65,7 @@ export default class Selection {
 
         this.addField(...args);
       });
-    } else if (isObject(fields, true)) {
+    } else if (isPlainObject(fields)) {
       Object.keys(fields).forEach(key => {
         this.addField(fields[key], key);
       });
@@ -85,7 +83,7 @@ export default class Selection {
   addField(field, alias = undefined) {
     const internal  = ns(this);
 
-    if (!isString(field) && !isArray(field) && !isObject(field, true)) {
+    if (!isString(field) && !isArray(field) && !isPlainObject(field)) {
       throw new TypeError('Field should be string, array of object literal');
     }
     if (undefined !== alias && !isString(alias)) {
