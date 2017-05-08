@@ -1,6 +1,6 @@
 import isPlainObject from 'lodash.isplainobject';
 import isString from 'lodash.isstring';
-import toQueryString from 'zogs-js/src/util/url/to-query-string';
+import {to as toQueryString} from 'src/util/query-string';
 import * as errors from './error';
 import * as methods from './method';
 
