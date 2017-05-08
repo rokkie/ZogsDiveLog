@@ -1,7 +1,7 @@
 import isString from 'lodash.isstring';
 import isDate from 'lodash.isdate';
 import ns from 'src/util/namespace';
-import isEmail from 'zogs-js/src/util/is/email';
+import checkEmail from 'src/util/check-email';
 import HttpClient from './../http-client/client';
 import RestClient from './../rest-client/client';
 
@@ -73,7 +73,7 @@ export default class Auth {
   signup(emailAddress, password, firstName, lastName, dateOfBirth) {
     if (!isString(emailAddress)) {
       throw new TypeError('Expected e-mail address to be string');
-    } else if (!isEmail(emailAddress)) {
+    } else if (!checkEmail(emailAddress)) {
       throw new RangeError('E-mail address appears to be invalid');
     }
 
