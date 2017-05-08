@@ -1,8 +1,8 @@
 import isDate from 'lodash.isdate';
 import isInteger from 'lodash.isinteger';
 import isString from 'lodash.isstring';
+import camelCase from 'lodash.camelcase';
 import ns from 'src/util/namespace';
-import underscoreToCamelCase from 'zogs-js/src/util/string/underscore-to-camel-case';
 
 /**
  * @class {DiverModel}
@@ -16,7 +16,7 @@ export default class DiverModel {
    */
   static factory(obj) {
     const {firstName, lastName, dateOfBirth} = Object.keys(obj).reduce((acc, key)  => {
-      acc[underscoreToCamelCase(key)] = obj[key];
+      acc[camelCase(key)] = obj[key];
       return acc;
     }, {});
 

@@ -2,7 +2,7 @@ import isArray from 'lodash.isarray';
 import isPlainObject from 'lodash.isplainobject';
 import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
-import {camelCaseToUnderscore} from 'zogs-js/src/util/string';
+import snakeCase from 'lodash.snakecase';
 import {asc, desc} from './order';
 
 /**
@@ -50,7 +50,7 @@ export default class Sort {
       throw new RangeError(`Direction should be ${asc} or ${desc}`);
     }
 
-    ns(this).map.set(camelCaseToUnderscore(column), direction);
+    ns(this).map.set(snakeCase(column), direction);
   }
 
   /**

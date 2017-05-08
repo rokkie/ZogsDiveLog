@@ -4,11 +4,9 @@ import isDate from 'lodash.isdate';
 import isFinite from 'lodash.isfinite';
 import isNumber from 'lodash.isnumber';
 import isString from 'lodash.isstring';
+import camelCase from 'lodash.camelcase';
+import snakeCase from 'lodash.snakecase';
 import ns from 'src/util/namespace';
-import {
-  camelCaseToUnderscore,
-  underscoreToCamelCase
-} from 'zogs-js/src/util/string';
 import {not} from './operator';
 
 const boolMap = new Map([
@@ -45,7 +43,7 @@ export default class Predicate {
     }
 
     Object.assign(internal, {
-      column  : camelCaseToUnderscore(column),
+      column  : snakeCase(column),
       operator: operator,
       value   : value,
       negated : negate
@@ -57,7 +55,7 @@ export default class Predicate {
   get column() {
     const internal = ns(this);
 
-    return underscoreToCamelCase(internal.column);
+    return camelCase(internal.column);
   }
 
   /**
