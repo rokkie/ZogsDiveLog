@@ -29,6 +29,7 @@
   "dependencies": {
     "element-ui": "^1.2.9",
     "lodash.isdate": "^4.0.1",
+    "lodash.isinteger": "^4.0.4",
     "lodash.isstring": "^4.0.1",
     "vue": "^2.3.0",
     "zogs-js": "gitlab:rokkie/zogs-js#devel"
