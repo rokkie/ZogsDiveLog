@@ -59,4 +59,21 @@ describe('REST query', () => {
 
     expect(range).to.be.instanceOf(Range);
   });
+
+  /**
+   * @test  {Query#resource}
+   * @test  {Query#selection}
+   * @test  {Query#filter}
+   * @test  {Query#sort}
+   * @test  {Query#range}
+   */
+  it('should throw on invalid arguments', () => {
+    const query = new Query();
+
+    expect(() => { query.resource = []; }).to.throw(TypeError);
+    expect(() => { query.selection = ''; }).to.throw(TypeError);
+    expect(() => { query.filter = ''; }).to.throw(TypeError);
+    expect(() => { query.sort = ''; }).to.throw(TypeError);
+    expect(() => { query.range = ''; }).to.throw(TypeError);
+  });
 });

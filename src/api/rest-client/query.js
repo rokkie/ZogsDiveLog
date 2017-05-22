@@ -1,3 +1,4 @@
+import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import Filter from './filter';
 import Range from './range';
@@ -35,6 +36,10 @@ export default class Query {
    * @type {String}
    */
   set resource(value) {
+    if (!isString(value)) {
+      throw new TypeError('Value should be string');
+    }
+
     ns(this).resource = value;
   }
 
@@ -52,6 +57,17 @@ export default class Query {
   }
 
   /**
+   * @type {Selection}
+   */
+  set selection(value) {
+    if (!(value instanceof Selection)) {
+      throw new TypeError('Value should be instance of Selection');
+    }
+
+    ns(this).selection = value;
+  }
+
+  /**
    * @type {Filter}
    */
   get filter() {
@@ -62,6 +78,17 @@ export default class Query {
     }
 
     return internal.filter;
+  }
+
+  /**
+   * @type {Filter}
+   */
+  set filter(value) {
+    if (!(value instanceof Filter)) {
+      throw new TypeError('Value should be instance of Filter');
+    }
+
+    ns(this).filter = value;
   }
 
   /**
@@ -78,6 +105,17 @@ export default class Query {
   }
 
   /**
+   * @type {Sort}
+   */
+  set sort(value) {
+    if (!(value instanceof Sort)) {
+      throw new TypeError('Value should be instance of Sort');
+    }
+
+    ns(this).sort = value;
+  }
+
+  /**
    * @type {Range}
    */
   get range() {
@@ -88,5 +126,16 @@ export default class Query {
     }
 
     return internal.range;
+  }
+
+  /**
+   * @type {Range}
+   */
+  set range(value) {
+    if (!(value instanceof Range)) {
+      throw new TypeError('Value should be instance of Range');
+    }
+
+    ns(this).range = value;
   }
 }
