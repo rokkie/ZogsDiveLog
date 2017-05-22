@@ -45,24 +45,24 @@ describe('Filter predicate', () => {
   });
 
   /**
-   * @test  {Predicate#strval}
+   * @test  {Predicate#toString}
    */
   it('should convert to string', () => {
     const predicate = new Predicate('foo', eq, 'bar'),
           date      = new Date();
 
-    expect(predicate.strval).to.equal('bar');
+    expect(predicate.toString()).to.equal('bar');
 
     predicate.value = true;
-    expect(predicate.strval).to.equal('true');
+    expect(predicate.toString()).to.equal('true');
 
     predicate.value = ['foo', 'bar'];
-    expect(predicate.strval).to.equal('foo,bar');
+    expect(predicate.toString()).to.equal('foo,bar');
 
     date.setUTCFullYear(2000, 0, 1);
     date.setUTCHours(0, 0, 0, 0);
     predicate.value = date;
-    expect(predicate.strval).to.equal('2000-01-01T00:00:00.000Z');
+    expect(predicate.toString()).to.equal('2000-01-01T00:00:00.000Z');
   });
 
   /**

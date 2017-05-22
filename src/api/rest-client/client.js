@@ -92,9 +92,9 @@ export default class RestClient {
           uri      = `${internal.apiUrl}/${resource}`,
           params   = {},
           headers  = {},
-          fields   = selection.strval,
-          filters  = filter.keyval,
-          order    = sorting.strval;
+          fields   = selection.toString(),
+          filters  = filter.toKeyVal(),
+          order    = sorting.toString();
 
     // optionally add selection to parameters
     if (0 < fields.length) {

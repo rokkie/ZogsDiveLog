@@ -67,7 +67,18 @@ export default class Sort {
     const map = ns(this).map;
     return map.has(column) ? map.get(column) : undefined;
   }
-
+  
+  /**
+   * Get string value
+   *
+   * @return {String}
+   */
+  toString() {
+    return Array.from(this)
+      .reduce((acc, [key, val]) => acc.concat(`${key}.${val}`), [])
+      .join(',');
+  }
+  
   /**
    * Get iterator
    *
@@ -82,14 +93,5 @@ export default class Sort {
    */
   [Symbol.iterator]() {
     return ns(this).map.entries();
-  }
-
-  /**
-   * @type {String}
-   */
-  get strval() {
-    return Array.from(this)
-      .reduce((acc, [key, val]) => acc.concat(`${key}.${val}`), [])
-      .join(',');
   }
 }

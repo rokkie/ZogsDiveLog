@@ -15,7 +15,7 @@ describe('Filters', () => {
 
     filter.addPredicate(new Predicate('foo', eq, 'bar'));
 
-    expect(filter.keyval).to.deep.equal({
+    expect(filter.toKeyVal()).to.deep.equal({
       foo: 'eq.bar'
     });
   });
@@ -32,7 +32,7 @@ describe('Filters', () => {
 
     filter.removePredicate(predicates[0]);
 
-    expect(filter.keyval).to.deep.equal({
+    expect(filter.toKeyVal()).to.deep.equal({
       baz: 'eq.qux'
     });
   });
@@ -46,7 +46,7 @@ describe('Filters', () => {
 
     filter.removePredicate(predicate);
 
-    expect(filter.keyval).to.deep.equal({
+    expect(filter.toKeyVal()).to.deep.equal({
       foo: 'eq.bar'
     });
   });

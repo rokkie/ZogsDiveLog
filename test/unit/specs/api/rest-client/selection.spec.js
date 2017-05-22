@@ -7,43 +7,43 @@ describe('Selections', () => {
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should add a single field', () => {
     const selection = new Selection();
 
     selection.addField('foo');
 
-    expect(selection.strval).to.equal('foo');
+    expect(selection.toString()).to.equal('foo');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should add a field with an alias', () => {
     const selection = new Selection();
 
     selection.addField('foo', 'fooAlias');
 
-    expect(selection.strval).to.equal('fooAlias:foo');
+    expect(selection.toString()).to.equal('fooAlias:foo');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should add multiple fields', () => {
     const selection = new Selection();
 
     selection.addFields(['foo', 'bar']);
 
-    expect(selection.strval).to.equal('foo,bar');
+    expect(selection.toString()).to.equal('foo,bar');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should add a list of tuples as fields with aliases', () => {
     const selection = new Selection();
@@ -54,12 +54,12 @@ describe('Selections', () => {
       ['bazAlias', 'baz']
     ]);
 
-    expect(selection.strval).to.equal('fooAlias:foo,barAlias:bar,bazAlias:baz');
+    expect(selection.toString()).to.equal('fooAlias:foo,barAlias:bar,bazAlias:baz');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should add an object hash as fields with aliases', () => {
     const selection = new Selection();
@@ -70,12 +70,12 @@ describe('Selections', () => {
       bazAlias: 'baz'
     });
 
-    expect(selection.strval).to.equal('fooAlias:foo,barAlias:bar,bazAlias:baz');
+    expect(selection.toString()).to.equal('fooAlias:foo,barAlias:bar,bazAlias:baz');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should recurse into nested tuples', () => {
     const selection = new Selection();
@@ -89,12 +89,12 @@ describe('Selections', () => {
       ]]
     ]);
 
-    expect(selection.strval).to.equal('fooAlias:foo,barAlias:bar,baz{quxAlias:qux,fubAlias:fub}');
+    expect(selection.toString()).to.equal('fooAlias:foo,barAlias:bar,baz{quxAlias:qux,fubAlias:fub}');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should recurse into nested object hashes', () => {
     const selection = new Selection();
@@ -108,12 +108,12 @@ describe('Selections', () => {
       }
     });
 
-    expect(selection.strval).to.equal('fooAlias:foo,barAlias:bar,bazAlias{quxAlias:qux,fubAlias:fub}');
+    expect(selection.toString()).to.equal('fooAlias:foo,barAlias:bar,bazAlias{quxAlias:qux,fubAlias:fub}');
   });
 
   /**
    * @test  {Selection#addField}
-   * @test  {Selection#strval}
+   * @test  {Selection#toString}
    */
   it('should mix a lists with tuples and object hashes', () => {
     const selection = new Selection();
@@ -129,7 +129,7 @@ describe('Selections', () => {
       'garply', 'waldo'
     ]);
 
-    expect(selection.strval).to.equal('foo,bar,bazAlias:baz,quxAlias:qux,fubAlias{corgeAlias:corge,graultAlias:grault},garply,waldo');
+    expect(selection.toString()).to.equal('foo,bar,bazAlias:baz,quxAlias:qux,fubAlias{corgeAlias:corge,graultAlias:grault},garply,waldo');
   });
 
   /**
@@ -140,7 +140,7 @@ describe('Selections', () => {
 
     selection.removeField('bar');
 
-    expect(selection.strval).to.equal('foo,baz');
+    expect(selection.toString()).to.equal('foo,baz');
   });
 
   /**
@@ -151,7 +151,7 @@ describe('Selections', () => {
 
     selection.removeField('qux');
 
-    expect(selection.strval).to.equal('foo,bar,baz');
+    expect(selection.toString()).to.equal('foo,bar,baz');
   });
 
   /**
