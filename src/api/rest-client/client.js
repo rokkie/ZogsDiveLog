@@ -2,10 +2,7 @@ import isString from 'lodash.isstring';
 import isInteger from 'lodash.isinteger';
 import isPlainObject from 'lodash.isplainobject';
 import ns from 'src/util/namespace';
-import Filter from './filter';
-import Selection from './selection';
-import Sort from './sort';
-import Range from './range';
+import Query from './query';
 
 /**
  * REST Client
@@ -78,23 +75,26 @@ export default class RestClient {
   }
 
   /**
-   * Find fields of resources matching a set of predicates
+   * Find a recordset based on a specified query
    *
-   * @param  {String}     resource  Name of the resource
-   * @param  {Selection}  [selection = new Selection()] Selection of fields
-   * @param  {Filter}     [filter = new Filter()]       Predicates to filter on
-   * @param  {Sort}       [sorting = new Sort()]        Sort order
-   * @param  {Range}      [range = new Range()]         Item range
+   * @param  {Query} query  The query
    * @return {Promise<Object>}
    */
-  findAll(resource, selection = new Selection(), filter = new Filter(), sorting = new Sort(), range = new Range()) {
+  find(query) {
+    if (!(query instanceof Query)) {
+      throw new TypeError('Query expected');
+    }
+    if (!query.resource) {
+      throw new Error('No resource specified');
+    }
+
     const internal = ns(this),
-          uri      = `${internal.apiUrl}/${resource}`,
+          uri      = `${internal.apiUrl}/${query.resource}`,
           params   = {},
           headers  = {},
-          fields   = selection.toString(),
-          filters  = filter.toKeyVal(),
-          order    = sorting.toString();
+          fields   = query.selection.toString(),
+          filters  = query.filter.toKeyVal(),
+          order    = query.sort.toString();
 
     // optionally add selection to parameters
     if (0 < fields.length) {
@@ -116,10 +116,10 @@ export default class RestClient {
     }
 
     // optionally add range to headers
-    if (!range.isAll) {
+    if (!query.range.isAll) {
       Object.assign(headers, {
         'Range-Unit': 'items',
-        Range       : `${range.offset}-${Infinity === range.limit ? '' : range.limit}`
+        Range       : `${query.range.offset}-${Infinity === query.range.limit ? '' : query.range.limit}`
       });
     }
 

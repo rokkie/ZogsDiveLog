@@ -4,6 +4,7 @@ import Predicate from 'src/api/rest-client/predicate';
 import Range from 'src/api/rest-client/range';
 import Selection from 'src/api/rest-client/selection';
 import Sort from 'src/api/rest-client/sort';
+import Query from 'src/api/rest-client/query';
 import {eq} from 'src/api/rest-client/operator';
 import {asc, desc} from 'src/api/rest-client/order';
 
@@ -62,34 +63,36 @@ describe('REST client', () => {
   });
 
   /**
-   * @test  {RestClient#findAll}
+   * @test  {RestClient#find}
    */
   it('should find a list of resources', () => {
-    const http      = {doGet: () => {}},
-          mock      = sinon.mock(http),
-          client    = new RestClient(http, API_URL),
-          resource  = 'my-resource',
-          range     = new Range(10, 100),
-          selection = new Selection([
-            'foo', 'bar',
-            ['baz', {
-              qux  : 'quux',
-              corge: 'grault'
-            }]
-          ]),
-          sorting   = new Sort({
-            foo: asc,
-            bar: desc
-          }),
-          filter    = new Filter([
-            new Predicate('foo', eq, 'qux'),
-            new Predicate('bar', eq, 'quux', true)
-          ]);
+    const http   = {doGet: () => {}},
+          mock   = sinon.mock(http),
+          client = new RestClient(http, API_URL),
+          query  = new Query();
+
+    query.resource  = 'my-resource';
+    query.range     = new Range(10, 100);
+    query.selection = new Selection([
+      'foo', 'bar',
+      ['baz', {
+        qux  : 'quux',
+        corge: 'grault'
+      }]
+    ]);
+    query.sort      = new Sort({
+      foo: asc,
+      bar: desc
+    });
+    query.filter    = new Filter([
+      new Predicate('foo', eq, 'qux'),
+      new Predicate('bar', eq, 'quux', true)
+    ]);
 
     mock
       .expects('doGet')
       .once()
-      .withArgs(`${API_URL}/${resource}`, {
+      .withArgs(`${API_URL}/${query.resource}`, {
         selection: 'foo,bar,baz{qux:quux,corge:grault}',
         foo      : 'eq.qux',
         bar      : 'not.eq.quux',
@@ -99,50 +102,53 @@ describe('REST client', () => {
         Range       : '10-100'
       });
 
-    client.findAll(resource, selection, filter, sorting, range);
+    client.find(query);
 
     mock.verify();
   });
 
   /**
-   * @test  {RestClient#findAll}
+   * @test  {RestClient#find}
    */
   it('should default to selecting all', () => {
-    const http      = {doGet: () => {}},
-          mock      = sinon.mock(http),
-          client    = new RestClient(http, API_URL),
-          resource  = 'my-resource';
+    const http   = {doGet: () => {}},
+          mock   = sinon.mock(http),
+          client = new RestClient(http, API_URL),
+          query  = new Query();
 
-    client.findAll(resource);
+    query.resource = 'my-resource';
 
     mock
       .expects('doGet')
       .once()
-      .withArgs(`${API_URL}/${resource}`, {}, {});
+      .withArgs(`${API_URL}/${query.resource}`, {}, {});
 
-    client.findAll(resource);
+    client.find(query);
 
     mock.verify();
   });
 
   /**
-   * @test  {RestClient#findAll}
+   * @test  {RestClient#find}
    */
   it('should omit limit when only offset is specified', () => {
-    const http      = {doGet: () => {}},
-          mock      = sinon.mock(http),
-          client    = new RestClient(http, API_URL),
-          resource  = 'my-resource';
+    const http   = {doGet: () => {}},
+          mock   = sinon.mock(http),
+          client = new RestClient(http, API_URL),
+          query  = new Query();
+
+    query.resource = 'my-resource';
+    query.range    = new Range(10);
 
     mock
       .expects('doGet')
       .once()
-      .withArgs(`${API_URL}/${resource}`, {}, {
+      .withArgs(`${API_URL}/${query.resource}`, {}, {
         'Range-Unit': 'items',
         Range       : '10-'
       });
 
-    client.findAll(resource, undefined, undefined, undefined, new Range(10));
+    client.find(query);
 
     mock.verify();
   });
