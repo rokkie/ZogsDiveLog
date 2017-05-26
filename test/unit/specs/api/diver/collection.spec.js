@@ -7,6 +7,15 @@ import DiverCollection from 'src/api/diver/collection';
 describe('DiverCollection', () => {
 
   /**
+   * @test  {DiverCollection#constructor}
+   */
+  it('should be possible to construct without arguments', () => {
+    expect(() => {
+      const collection = new DiverCollection();
+    }).to.not.throw(TypeError);
+  });
+
+  /**
    * @test  {DiverCollection#\[Symbol.iterator\]}
    */
   it('should be iterable', () => {

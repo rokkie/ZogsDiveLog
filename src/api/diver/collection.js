@@ -9,9 +9,9 @@ export default class DiverCollection {
 
   /**
    *
-   * @param {DiverModel[]}  divers
+   * @param {DiverModel[]}  [divers]
    */
-  constructor(divers) {
+  constructor(divers = []) {
     const internal = ns(this);
 
     if (!isArray(divers)) {
