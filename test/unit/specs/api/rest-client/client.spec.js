@@ -164,5 +164,7 @@ describe('REST client', () => {
     expect(() => { client.rpc('foo', []); }).to.throw(TypeError);
     expect(() => { client.findOne([], 123); }).to.throw(TypeError);
     expect(() => { client.findOne('foo', 'bar'); }).to.throw(TypeError);
+    expect(() => { client.find('foo'); }).to.throw(TypeError);
+    expect(() => { client.find(new Query()); }).to.throw(Error);
   });
 });
