@@ -1,9 +1,9 @@
+import chunk from 'lodash.chunk';
 import isString from 'lodash.isstring';
 import ns from 'src/util/namespace';
 import HttpClient from '../http-client/client';
 import RestClient from '../rest-client/client';
-import Filter from '../rest-client/filter';
-import Selection from '../rest-client/selection';
+import QueryBuilder from '../rest-client/query-builder';
 import DiverModel from './model';
 import DiverCollection from './collection';
 
@@ -31,6 +31,7 @@ export default class DiverResource {
   }
 
   /**
+   * Construct a new DiverResource
    *
    * @param {RestClient}  restClient
    */
@@ -43,6 +44,7 @@ export default class DiverResource {
   }
 
   /**
+   * Find one Diver by ID
    *
    * @param  {Number} id
    * @return {Promise<DiverModel>}
@@ -54,13 +56,24 @@ export default class DiverResource {
   }
 
   /**
+   * Find a list of Divers based on a set of predicates
+   * TODO: negation
    *
-   * @param  {Filter} [filter = new Filter()]
+   * @param  {...*} args Predicates
    * @return {Promise<DiverCollection>}
    */
-  findAll(filter = new Filter()) {
+  find(...args) {
+    const qb  = new QueryBuilder(),
+          len = Math.floor(args.length / 3) * 3;
+
+    qb.from(RESOURCE_NAME);
+
+    chunk(args, 3)
+      .slice(0, len)
+      .forEach(predicate => qb.where(...predicate));
+
     return ns(this).restClient
-      .findAll(RESOURCE_NAME, new Selection(), filter)
+      .find(qb.query)
       .then(list => new DiverCollection(list.map(DiverModel.factory)));
   }
 }
