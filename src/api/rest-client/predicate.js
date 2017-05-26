@@ -127,9 +127,11 @@ export default class Predicate {
   }
 
   /**
-   * @type  {String}
+   * Get string value
+   *
+   * @return {String}
    */
-  get strval () {
+  toString() {
     const value = this.value;
 
     let ret;

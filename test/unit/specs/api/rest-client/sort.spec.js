@@ -72,7 +72,7 @@ describe('Sorting', () => {
   });
 
   /**
-   * @test  {Sort#strval}
+   * @test  {Sort#toString}
    */
   it('should produce correct string values', () => {
     const sort = new Sort();
@@ -80,7 +80,7 @@ describe('Sorting', () => {
     sort.set('foo', asc);
     sort.set('bar', desc);
 
-    expect(sort.strval).to.equal(`foo.${asc},bar.${desc}`);
+    expect(sort.toString()).to.equal(`foo.${asc},bar.${desc}`);
   });
 
   /**

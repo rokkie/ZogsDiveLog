@@ -113,21 +113,15 @@ export default class Selection {
       internal.fields.delete(field);
     }
   }
-
+  
   /**
-   * Get iterator
+   * Get string value
    *
-   * @return {Iterator<String, String>}
+   * @return {String}
    */
-  [Symbol.iterator]() {
-    return ns(this).fields.entries();
-  }
-
-  /**
-   * @type {String}
-   */
-  get strval() {
-    return Array.from(this)
+  toString() {
+    return Array
+      .from(this)
       .reduce((acc, [alias, field]) => {
         let str;
 
@@ -136,11 +130,20 @@ export default class Selection {
         } else if (isString(field)) {
           str = `${alias}:${field}`;
         } else if (field instanceof Selection) {
-          str = `${alias}{${field.strval}}`;
+          str = `${alias}{${field.toString()}}`;
         }
 
         return acc.concat(str);
       }, [])
       .join(',');
+  }
+
+  /**
+   * Get iterator
+   *
+   * @return {Iterator<String, String>}
+   */
+  [Symbol.iterator]() {
+    return ns(this).fields.entries();
   }
 }

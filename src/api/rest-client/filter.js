@@ -59,6 +59,19 @@ export default class Filter {
       internal.predicates.delete(predicate);
     }
   }
+  
+  /**
+   * Get key/value pairs
+   *
+   * @return {Object<String, String>}
+   */
+  toKeyVal() {
+    return Array.from(this)
+      .reduce((acc, predicate) => {
+        acc[predicate.column] = `${predicate.operator}.${predicate.toString()}`;
+        return acc;
+      }, {});
+  }
 
   /**
    * Get iterator
@@ -71,16 +84,5 @@ export default class Filter {
    */
   [Symbol.iterator]() {
     return ns(this).predicates.values();
-  }
-
-  /**
-   * @type {Object<String, String>}
-   */
-  get keyval() {
-    return Array.from(this)
-      .reduce((acc, predicate) => {
-        acc[predicate.column] = `${predicate.operator}.${predicate.strval}`;
-        return acc;
-      }, {});
   }
 }
