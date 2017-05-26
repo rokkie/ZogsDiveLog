@@ -11,7 +11,7 @@ describe('DiverCollection', () => {
    */
   it('should be possible to construct without arguments', () => {
     expect(() => {
-      const collection = new DiverCollection();
+      new DiverCollection();
     }).to.not.throw(TypeError);
   });
 
